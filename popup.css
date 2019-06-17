@@ -1,0 +1,180 @@
+* {
+  transition: all 0.3s;
+}
+
+body {
+  width: 300px;
+  padding: 0;
+  margin: 0;
+  border-top: 2px solid white;
+  border-left: 2px solid white;
+  border-right: 1px solid white;
+  border-bottom: 1px solid white;
+}
+
+h1 {
+  color: white;
+  font-size: 18px;
+  margin: 0;
+}
+
+h2 {
+  margin: 2px 0 2px 0;
+  font-size: 16px;
+}
+
+header, footer, .title {
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+footer {
+  background-color: #f1f1f1;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: calc(100% - 5px);
+  height: 30px;
+  padding-left: 5px;
+}
+
+footer h1, footer i {
+  color: #EF452C;
+}
+
+header {
+  height: 50px;
+  background-color: #EF452C;
+  padding-left: 10px;
+}
+
+header i, footer i {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+header i:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+footer i, header i, .title i, .editPost i, .folder, .post:hover {
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.folders, .posts {
+  width: calc(100% - 8px);
+  max-width: 100%;
+  padding: 3px 5px 10px 5px;
+  overflow-y: auto;
+}
+
+.folders, .subfolders {
+  max-height: 75px;
+  overflow-y: auto;
+}
+
+.folders {
+  background-color: #f1f1f1;
+}
+
+.folder {
+  display: inline-block;
+  padding: 2px 5px 2px 5px;
+  border-radius: 3px;
+  margin-top: 5px;
+  margin-left: 2px;
+  margin-right: 2px;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.folder:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.subfolders {
+  margin-bottom: 8px;
+}
+
+.posts {
+  background-color: white;
+  height: 350px;
+  max-height: 350px;
+  margin-bottom: 28px;
+}
+
+.post {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.post:hover {
+  text-decoration: underline;
+}
+
+.editPost {
+  align-items: center;
+}
+
+.editPost i {
+  margin-right: 5px;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.editPost i:hover {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+input {
+  position: absolute;
+  right: 30px;
+  top: 15px;
+  font-size: 15px;
+  padding-left: 5px;
+  border: 0;
+  height: 25px;
+  width: 0px;
+  opacity: 0;
+  transition: width 0.5s;
+
+}
+
+.title i {
+  visibility: hidden;
+}
+
+.footerMenu {
+  visibility: hidden;
+  flex-direction: column;
+  height: auto;
+}
+
+.movePostMenu i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-top: 2px;
+}
+
+.errorMenu {
+  /* visibility: visible; */
+  text-align: center;
+  height: 35px;
+}
+
+.errorMenu h1 {
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.errorMenu h1:hover {
+  cursor: pointer;
+}
