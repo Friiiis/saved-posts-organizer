@@ -33,6 +33,9 @@ To open extension options, navigate to the extension page, find Saved posts orga
 
 Alternatively you can open the extension popup by clicking its logo, and click on the error message at the bottom. That will open the extension options. 
 
-On this page, add your reddit account details and your client ID and secret. When this is done, your ready and to use the plugin.
+![options page](src/images/readme/2.jpg "options page")
+
+
+On this page, add your reddit account details and your client ID and secret. When this is done, hit save, and your ready to use the plugin.
 
 *Your details will only be stored locally on your browser.*
