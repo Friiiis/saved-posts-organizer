@@ -15,7 +15,7 @@ Navigate to https://old.reddit.com/prefs/apps/
 
 1. Click "are you a developer? create an app..."
 2. Fill in the following details:
-   - name: "Saved posts organizer - <your username>"
+   - name: "Saved posts organizer - *your username*"
    - choose "script" as the app type
    - description: "Browser extension for showing and organizing my saved posts."
    - redirect uri: "http://localhost:8080"
