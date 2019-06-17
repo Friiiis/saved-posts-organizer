@@ -9,8 +9,11 @@
 <main>
 <body>
   <header>
-    <h1>Saved posts organizer</h1>
-      <h1><i title="Add folder" class="fas fa-plus-square" id="addFolder"></i></h1>
+    <div>
+      <h1>Saved posts organizer</h1>
+      u/<span id="username"></span>
+    </div>
+    <h1><i title="Add folder" class="fas fa-plus-square" id="addFolder"></i></h1>
   </header>
 
   <div class="folders" id="folders">
@@ -57,8 +60,8 @@
   </footer>
 
   <footer class="footerMenu errorMenu" id="errorMenu">
-    Error:
-    <h1 id="linkToSettings">Have you set up your account properly?</h1>
+    <div>Error: <span id="errorMessage"></span></div>
+    <h1 id="linkToSettings">Set up account info</h1>
   </footer>
 
   <script type="text/javascript" src="snoowrap-v1.js"></script>

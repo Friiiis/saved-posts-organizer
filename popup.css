@@ -50,6 +50,7 @@ header {
   height: 50px;
   background-color: #EF452C;
   padding-left: 10px;
+  color: white;
 }
 
 header i, footer i {
@@ -167,7 +168,9 @@ input {
 .errorMenu {
   /* visibility: visible; */
   text-align: center;
-  height: 35px;
+  /* height: 35px; */
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .errorMenu h1 {

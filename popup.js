@@ -7,6 +7,11 @@
 // categorizedPosts   : all user's saved posts categorized by themselves
 // categories         : the user's custom categories
 
+var clientID = localStorage.getItem('clientID');
+var clientSecret = localStorage.getItem('clientSecret');
+var username = localStorage.getItem('username');
+var password = localStorage.getItem('password');
+
 var creds;
 var sw;
 var posts = {}
@@ -15,25 +20,20 @@ var categories;
 var lastClickedCategory = "All posts";
 var inputVisible = false;
 
-// console.log(JSON.parse(localStorage.getItem('posts')));
-// console.log(JSON.parse(localStorage.getItem('categorizedPosts')));
-
-if (localStorage.getItem('posts') != null) {
-  posts = JSON.parse(localStorage.getItem('posts'));
+if (localStorage.getItem('posts' + username) != null) {
+  posts = JSON.parse(localStorage.getItem('posts' + username));
 }
 
-if (localStorage.getItem('categorizedPosts') != null) {
-  categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts'));
+if (localStorage.getItem('categorizedPosts' + username) != null) {
+  categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts' + username));
 }
 
-chrome.storage.local.get(['categories'],function(result) {
-          categories = result.categories;
-          console.log(categories);
-        });
-
-
-console.log(posts);
-console.log(categorizedPosts);
+if (localStorage.getItem('categories' + username) != null) {
+  categories = JSON.parse(localStorage.getItem('categories' + username));
+} else {
+  categories = ["Uncategorized"];
+  localStorage.setItem('categories' + username, JSON.stringify(categories));
+}
 
 fetch('creds.json')
   .then(response => response.text())
@@ -45,28 +45,24 @@ fetch('creds.json')
   });
 
 function setupSnoowrap() {
-  var clientID = localStorage.getItem('clientID');
-  var clientSecret = localStorage.getItem('clientSecret');
-  var username = localStorage.getItem('username');
-  var password = localStorage.getItem('password');
-
-  console.log(clientID);
-  console.log(clientSecret);
-  console.log(username);
-  console.log(password);
 
   if ((clientID == null || clientSecret == null || username == null || password == null)
       || (clientID == "" || clientSecret == "" || username == "" || password == "") ) {
-    openErrorMenu();
+    openErrorMenu("User info is not correct. Please update by clicking below:");
   } else {
     //https://github.com/not-an-aardvark/snoowrap
-    sw = new snoowrap({
-      userAgent: creds['userAgent'],
-      clientId: clientID,
-      clientSecret: clientSecret,
-      username: username,
-      password: password
-    });
+    try {
+      sw = new snoowrap({
+        userAgent: creds['userAgent'],
+        clientId: clientID,
+        clientSecret: clientSecret,
+        username: username,
+        password: password
+      });
+      sw.config({debug: true});
+    } catch(error) {
+      openErrorMenu("Failed when loading user info. Possibly caused by an error in log in details or client ID and secret. Click below to check that the information is correct.");
+    }
   }
 }
 
@@ -76,6 +72,11 @@ document.getElementById("addFolder").addEventListener("click", addFolder);
 document.getElementById("linkToSettings").addEventListener("click", openSettings);
 
 function sync() {
+  console.log(sw);
+  if (sw == undefined) {
+    openErrorMenu("Failed when loading user info. Possibly caused by an error in log in details or client ID and secret. Click below to check that the information is correct.");
+    return;
+  }
   posts = {}
   sw.getMe().getSavedContent().then(function(content) {
     console.log(content);
@@ -92,11 +93,14 @@ function sync() {
       posts[ir].id = content[i]['id'];
     }
 
-    localStorage.setItem('posts', JSON.stringify(posts));
+    localStorage.setItem('posts' + username, JSON.stringify(posts));
 
-    console.log(JSON.parse(localStorage.getItem('posts')));
+    console.log(JSON.parse(localStorage.getItem('posts' + username)));
 
     updateCategorized();
+  }).catch(function(error) {
+    console.log(error);
+    openErrorMenu("Failed when loading user info. Possibly caused by an error in log in details or client ID and secret. Click below to check that the information is correct.");
   });
 }
 
@@ -116,13 +120,10 @@ function updateCategorized() {
       }
     }
 
-    if (postFound) {
+    if (postFound) { //adds all matching posts to a temporary array, that will be assigned to categorizedPosts
       tempJSON[i] = categorizedPosts[i];
     }
 
-    // if (!postFound) { //if post is not found, meaning that they have been unsaved by the user
-    //   categorizedPosts.splice(i, 1);
-    // }
   }
 
   categorizedPosts = tempJSON;
@@ -153,10 +154,10 @@ function updateCategorized() {
 
   }
 
-  localStorage.setItem('categorizedPosts', JSON.stringify(categorizedPosts));
-  console.log(JSON.parse(localStorage.getItem('categorizedPosts')));
+  localStorage.setItem('categorizedPosts' + username, JSON.stringify(categorizedPosts));
+  console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
 
-  localStorage.setItem('lastUpdated', new Date());
+  localStorage.setItem('lastUpdated' + username, new Date());
 
   initView();
 }
@@ -164,13 +165,14 @@ function updateCategorized() {
 //sets up the view with categories buttons and default post category (all)
 //should only be called at the start of the session or when adding/deleting a category
 function initView() {
+  document.getElementById('username').innerHTML = username;
+
   var folders = document.getElementById('folders');
 
   folders.innerHTML = '<div class="folder" id="all">All posts</div>';
 
   for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
     if (!categories.includes(categorizedPosts[i].category)) {
-      // categories.push(categorizedPosts[i].category);
       categorizedPosts[i].category = "Uncategorized";
     }
   }
@@ -194,7 +196,7 @@ function initView() {
     updateView("All posts");
   });
 
-  updateView("All posts");
+  updateView(lastClickedCategory);
 
 }
 
@@ -276,7 +278,7 @@ function updateView(category) {
 
   }
 
-  d = new Date(localStorage.getItem('lastUpdated'));
+  d = new Date(localStorage.getItem('lastUpdated' + username));
   var minutes = d.getMinutes();
   var hours = d.getHours();
   if (minutes < 10) {
@@ -306,6 +308,8 @@ function deleteCategory(category) {
       categorizedPosts[i].category = "Uncategorized";
     }
   }
+
+  localStorage.setItem('categories' + username, JSON.stringify(categories));
 
   initView();
 }
@@ -347,10 +351,10 @@ function movePost(id, category) {
   updateView(lastClickedCategory);
 
   console.log("before:");
-  console.log(JSON.parse(localStorage.getItem('categorizedPosts')));
-  localStorage.setItem('categorizedPosts', JSON.stringify(categorizedPosts));
+  console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
+  localStorage.setItem('categorizedPosts' + username, JSON.stringify(categorizedPosts));
   console.log("after:");
-  console.log(JSON.parse(localStorage.getItem('categorizedPosts')));
+  console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
 
   document.getElementById('movePostMenu').style.opacity = 0;
   document.getElementById('movePostMenu').style.visibility = "hidden";
@@ -369,10 +373,11 @@ function addFolder() {
     if (input.value.length == 0) {
       return;
     }
-    categories.push(input.value);
-    chrome.storage.local.set({categories: categories}, function() {
-            console.log('categories is set to ' + categories);
-          });
+    if (!categories.includes(input.value)) {
+      categories.push(input.value);
+      localStorage.setItem('categories' + username, JSON.stringify(categories));
+      console.log(JSON.parse(localStorage.getItem('categories' + username)));
+    }
     initView();
     input.style.width = "0px";
     setTimeout(function () {
@@ -413,7 +418,8 @@ function openSettings() {
   }
 }
 
-function openErrorMenu() {
+function openErrorMenu(message) {
+  document.getElementById('errorMessage').innerHTML = message;
   document.getElementById('errorMenu').style.visibility = "visible";
   document.getElementById('errorMenu').style.opacity = 1;
 }
