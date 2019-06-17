@@ -19,6 +19,7 @@ var categorizedPosts = {}
 var categories;
 var lastClickedCategory = "All posts";
 var inputVisible = false;
+var errortext = "Failed when loading user info. Possibly caused by an error in log in details or client ID and secret. Click below to check that the information is correct.";
 
 if (localStorage.getItem('posts' + username) != null) {
   posts = JSON.parse(localStorage.getItem('posts' + username));
@@ -48,7 +49,8 @@ function setupSnoowrap() {
 
   if ((clientID == null || clientSecret == null || username == null || password == null)
       || (clientID == "" || clientSecret == "" || username == "" || password == "") ) {
-    openErrorMenu("User info is not correct. Please update by clicking below:");
+    errortext = "Before usig this extension, you need to update your reddit user information:";
+    openErrorMenu(errortext);
   } else {
     //https://github.com/not-an-aardvark/snoowrap
     try {
@@ -61,7 +63,7 @@ function setupSnoowrap() {
       });
       sw.config({debug: true});
     } catch(error) {
-      openErrorMenu("Failed when loading user info. Possibly caused by an error in log in details or client ID and secret. Click below to check that the information is correct.");
+      openErrorMenu(errortext);
     }
   }
 }
@@ -74,7 +76,7 @@ document.getElementById("linkToSettings").addEventListener("click", openSettings
 function sync() {
   console.log(sw);
   if (sw == undefined) {
-    openErrorMenu("Failed when loading user info. Possibly caused by an error in log in details or client ID and secret. Click below to check that the information is correct.");
+    openErrorMenu(errortext);
     return;
   }
   posts = {}
@@ -100,7 +102,7 @@ function sync() {
     updateCategorized();
   }).catch(function(error) {
     console.log(error);
-    openErrorMenu("Failed when loading user info. Possibly caused by an error in log in details or client ID and secret. Click below to check that the information is correct.");
+    openErrorMenu(errortext);
   });
 }
 
