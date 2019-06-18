@@ -36,6 +36,6 @@ Alternatively you can open the extension popup by clicking its logo, and click o
 ![options page](src/images/readme/2.jpg "options page")
 
 
-On this page, add your reddit account details and your client ID and secret. When this is done, hit save, and your ready to use the plugin.
+On this page, add your reddit account details and your client ID and secret. When this is done, hit save, and you're ready to use the plugin.
 
 *Your details will only be stored locally on your browser.*
