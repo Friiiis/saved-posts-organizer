@@ -166,7 +166,7 @@ function updateCategorized() {
 
   localStorage.setItem('lastUpdated' + username, new Date());
 
-  initView("All posts");
+  initView(lastClickedCategory);
 }
 
 //sets up the view with categories buttons and default post category (all)
