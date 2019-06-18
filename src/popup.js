@@ -39,10 +39,10 @@ if (localStorage.getItem('categories' + username) != null) {
 fetch('creds.json')
   .then(response => response.text())
   .then(function(text) {
+    initView("All posts");
     creds = JSON.parse(text);
     setupSnoowrap();
     sync();
-    initView();
   });
 
 function setupSnoowrap() {
@@ -52,6 +52,8 @@ function setupSnoowrap() {
     errortext = "Before usig this extension, you need to update your reddit user information:";
     openErrorMenu(errortext);
   } else {
+    document.getElementById('sync').classList.add("spin");
+
     //https://github.com/not-an-aardvark/snoowrap
     try {
       sw = new snoowrap({
@@ -79,6 +81,9 @@ function sync() {
     openErrorMenu(errortext);
     return;
   }
+
+  document.getElementById('sync').classList.add("spin");
+
   posts = {}
   sw.getMe().getSavedContent().then(function(content) {
     console.log(content);
@@ -161,12 +166,12 @@ function updateCategorized() {
 
   localStorage.setItem('lastUpdated' + username, new Date());
 
-  initView();
+  initView("All posts");
 }
 
 //sets up the view with categories buttons and default post category (all)
 //should only be called at the start of the session or when adding/deleting a category
-function initView() {
+function initView(category) {
   document.getElementById('username').innerHTML = username;
 
   var folders = document.getElementById('folders');
@@ -198,7 +203,7 @@ function initView() {
     updateView("All posts");
   });
 
-  updateView(lastClickedCategory);
+  updateView(category);
 
 }
 
@@ -227,7 +232,7 @@ function updateView(category) {
       var title = categorizedPosts[i].title.replace(/"/g, "'");
       var id = categorizedPosts[i].id;
       var permalink = categorizedPosts[i].permalink;
-      postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Edit category" class="fas fa-pen" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + '</div></div>';
+      postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-edit" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + '</div></div>';
     }
 
     //adds onclick listeners to posts
@@ -254,7 +259,7 @@ function updateView(category) {
         var title = categorizedPosts[i].title.replace(/"/g, "'");
         var id = categorizedPosts[i].id;
         var permalink = categorizedPosts[i].permalink;
-        postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Edit category" class="fas fa-pen" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + '</div></div>';
+        postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Edit category" class="fas fa-edit" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + '</div></div>';
       }
     }
 
@@ -291,12 +296,28 @@ function updateView(category) {
   }
   document.getElementById('lastUpdated').innerHTML = d.getDate() + "/" + (d.getMonth() + 1) + " - " + hours + ":" + minutes;
 
+  document.getElementById('sync').classList.remove("spin");
+
 }
 
 
-
-
 function deleteCategory(category) {
+  document.getElementById('deletedCategory').innerHTML = category;
+  document.getElementById('confirmDeletion').style.visibility = "visible";
+  document.getElementById('confirmDeletion').style.opacity = 1;
+  document.getElementById("deny").addEventListener("click", function() {
+    document.getElementById('confirmDeletion').style.visibility = "hidden";
+    document.getElementById('confirmDeletion').style.opacity = 0;
+  });
+  document.getElementById("confirm").addEventListener("click", function() {
+    document.getElementById('confirmDeletion').style.visibility = "hidden";
+    document.getElementById('confirmDeletion').style.opacity = 0;
+    deletionConfirmed(category);
+  });
+
+}
+
+function deletionConfirmed(category) {
   //deletes category from categories array
   for (var i = 0; i < categories.length; i++) {
     if (categories[i] == category) {
@@ -313,7 +334,7 @@ function deleteCategory(category) {
 
   localStorage.setItem('categories' + username, JSON.stringify(categories));
 
-  initView();
+  initView("All posts");
 }
 
 function editPostCategory(id) {
@@ -380,7 +401,7 @@ function addFolder() {
       localStorage.setItem('categories' + username, JSON.stringify(categories));
       console.log(JSON.parse(localStorage.getItem('categories' + username)));
     }
-    initView();
+    initView(lastClickedCategory);
     input.style.width = "0px";
     setTimeout(function () {
       input.style.opacity = 0;
