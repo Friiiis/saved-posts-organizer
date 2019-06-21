@@ -29,7 +29,7 @@ Find your client ID and client secret (see image below).
 
 ### Step 4: open extension options
 
-To open extension options, navigate to the [Chrome extension page](chrome://extensions/), find Saved posts organizer and click on "Details", and then click on "Extension options".
+To open extension options, navigate to the Chrome extension page (chrome://extensions/), find Saved posts organizer and click on "Details", and then click on "Extension options".
 
 ![options page](src/images/readme/2.jpg "options page")
 
