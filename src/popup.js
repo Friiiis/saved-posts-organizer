@@ -74,6 +74,7 @@ document.getElementById("sync").addEventListener("click", sync);
 document.getElementById("settings").addEventListener("click", openSettings);
 document.getElementById("addFolder").addEventListener("click", addFolder);
 document.getElementById("linkToSettings").addEventListener("click", openSettings);
+document.getElementById("linkToGithub").addEventListener("click", openGithub);
 
 function sync() {
   console.log(sw);
@@ -439,6 +440,10 @@ function openSettings() {
   } else {
     window.open(chrome.runtime.getURL('options.html'));
   }
+}
+
+function openGithub() {
+  chrome.tabs.create({active: true, url: 'https://github.com/Friiiis/saved-posts-organizer/blob/master/README.md'});
 }
 
 function openErrorMenu(message) {
