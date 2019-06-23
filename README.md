@@ -4,9 +4,9 @@ This extension loads your saved posts on reddit and lets you organize them in cu
 
 ## Setup guide
 
-Unfortunately fetching saved posts from a reddit account is only available when in developer mode. This means that you have to set up your own account as a developer to use this extension. Luckily this only takes a few clicks.
+Unfortunately fetching saved posts from a reddit account is only available when in developer mode. This means that you have to set up your own account as a developer to use this extension ([see the reddit api documentation for more details](https://www.reddit.com/dev/api)). Luckily the setup only takes a few clicks.
 
-### Step 1: install Saved Posts Organizer from google web store
+### Step 1: install Saved Posts Organizer from Google Web Store
 Link:
 
 ### Step 2: setup developer account
@@ -29,9 +29,7 @@ Find your client ID and client secret (see image below).
 
 ### Step 4: open extension options
 
-To open extension options, navigate to the extension page, find Saved posts organizer and click on "Details", and then click on "Extension options".
-
-Alternatively you can open the extension popup by clicking its logo, and click on the error message at the bottom. That will open the extension options.
+To open extension options, navigate to the Chrome extension page (chrome://extensions/), find Saved posts organizer and click on "Details", and then click on "Extension options".
 
 ![options page](src/images/readme/2.jpg "options page")
 
