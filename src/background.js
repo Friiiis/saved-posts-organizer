@@ -19,21 +19,6 @@ if (localStorage.getItem('categories' + username) != null) {
 }
 console.log(categories);
 
-
-// var categoriesUsername = 'categories' + username;
-// chrome.storage.local.get(['categoriesUsername'],function(result) {
-//           console.log(result.categoriesUsername);
-//           categories = result.categoriesUsername;
-//
-//           // first time loading the app, there will be no categories, so we add "Uncategorized"
-//           if (categories == null || categories == undefined) {
-//             var categories = ["Uncategorized"];
-//             chrome.storage.local.set({categoriesUsername: categories}, function() {
-//                     console.log('categories is set to ' + categories);
-//                   });
-//           }
-//         });
-
 //https://github.com/not-an-aardvark/snoowrap
 sw = new snoowrap({
   userAgent: 'saved posts organizer by /u/friiiiiis',

@@ -63,7 +63,6 @@ function setupSnoowrap() {
         username: username,
         password: password
       });
-      sw.config({debug: true});
     } catch(error) {
       openErrorMenu(errortext);
     }
@@ -451,3 +450,27 @@ function openErrorMenu(message) {
   document.getElementById('errorMenu').style.visibility = "visible";
   document.getElementById('errorMenu').style.opacity = 1;
 }
+
+function getSavedPostsFromFeed() {
+  fetch('https://www.reddit.com/prefs/feeds')
+    .then((res) => {
+      return res.text();
+    })
+    .then((data) => {
+      console.log(data);
+      var from = data.search('feed=') + 5;
+      var to = data.search('&amp;user=');
+      var key = data.substring(from, to);
+      console.log(key);
+      return key;
+    })
+    .then((key) => {
+      $.getJSON('https://www.reddit.com/saved.json?feed=' + key, function(data) {
+        console.log(data);
+      }).catch((error) => {
+        console.log("not logged in");
+      });
+    });
+}
+
+getSavedPostsFromFeed();
