@@ -16,4 +16,4 @@ Please add an issue if you expirence any bugs.
 
 ## Licens 
 
-This software is licensed under [CopyLeft](https://en.wikipedia.org/wiki/Copyleft). 
+This software is licensed under [CopyLeft](https://en.wikipedia.org/wiki/Copyleft). This means that anyone is free to copy and reuse this software, as long as the resulting software is also licensed under CopyLeft.
