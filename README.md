@@ -12,6 +12,8 @@ The extension fetches data from your personal feed (https://www.reddit.com/prefs
 
 The data will only be saved locally, meaning there is no sync between browsers.
 
+If you log out of your reddit account, all your categories will be saved and all your posts will be organized the same way, when you log back in. But if you remove the extension from your browser, all categories will be lost and your posts will no longer be organized, if you should reinstall the extension later.
+
 Please add an issue if you expirence any bugs.
 
 ## Screenshots
