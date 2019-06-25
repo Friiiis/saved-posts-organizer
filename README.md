@@ -20,23 +20,23 @@ Please add an issue if you expirence any bugs.
 
 ### All saved posts
 
-![All posts](src/images/readme/allposts.png "All posts")
+<img src="src/images/readme/allposts.png" width="250">
 
 ### Posts inside a category "Programming"
 
-![Programming category](src/images/readme/programming.png "Programming category")
+<img src="src/images/readme/programming.png" width="250">
 
 ### Add new category
 
-![Add category](src/images/readme/addcategory.png "Add category")
+<img src="src/images/readme/addcategory.png" width="250">
 
 ### Move post to some category
 
-![Move post](src/images/readme/moveposts.png "Move post")
+<img src="src/images/readme/moveposts.png" width="250">
 
 ### Delete category
 
-![Delete category](src/images/readme/deletecategory.png "Delete category")
+<img src="src/images/readme/deletecategory.png" width="250">
 
 ## Licens 
 
