@@ -1,46 +1,121 @@
-var clientID = localStorage.getItem('clientID');
-var clientSecret = localStorage.getItem('clientSecret');
-var username = localStorage.getItem('username');
-var password = localStorage.getItem('password');
+// var clientID = localStorage.getItem('clientID');
+// var clientSecret = localStorage.getItem('clientSecret');
+var username;
+// = localStorage.getItem('username');
+// var password = localStorage.getItem('password');
 
 
 var posts = {}
 categorizedPosts = {}
-if (localStorage.getItem('categorizedPosts' + username) != null) {
-  categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts' + username));
-}
-
 var categories;
-if (localStorage.getItem('categories' + username) != null) {
-  categories = JSON.parse(localStorage.getItem('categories' + username));
-} else {
-  categories = ["Uncategorized"];
-  localStorage.setItem('categories' + username, JSON.stringify(categories));
-}
-console.log(categories);
+//
+// if (localStorage.getItem('categorizedPosts' + username) != null) {
+//   categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts' + username));
+// }
+//
+// if (localStorage.getItem('categories' + username) != null) {
+//   categories = JSON.parse(localStorage.getItem('categories' + username));
+// } else {
+//   categories = ["Uncategorized"];
+//   localStorage.setItem('categories' + username, JSON.stringify(categories));
+// }
+// console.log(categories);
 
 //https://github.com/not-an-aardvark/snoowrap
-sw = new snoowrap({
-  userAgent: 'saved posts organizer by /u/friiiiiis',
-  clientId: clientID,
-  clientSecret: clientSecret,
-  username: username,
-  password: password
-});
+// sw = new snoowrap({
+//   userAgent: 'saved posts organizer by /u/friiiiiis',
+//   clientId: clientID,
+//   clientSecret: clientSecret,
+//   username: username,
+//   password: password
+// });
+//
+// sw.getMe().getSavedContent().then(function(content) {
+//   for (var i = 0; i < content.length; i++) {
+//     var ir = content.length - 1 - i;
+//     posts[ir] = {}
+//     posts[ir].title = content[i]['title'];
+//     posts[ir].permalink = content[i]['permalink'];
+//     posts[ir].id = content[i]['id'];
+//   }
+//
+//   localStorage.setItem('posts' + username, JSON.stringify(posts));
+//
+//   updateCategorized();
+// });
 
-sw.getMe().getSavedContent().then(function(content) {
-  for (var i = 0; i < content.length; i++) {
-    var ir = content.length - 1 - i;
-    posts[ir] = {}
-    posts[ir].title = content[i]['title'];
-    posts[ir].permalink = content[i]['permalink'];
-    posts[ir].id = content[i]['id'];
+
+function getSavedPostsFromFeed() {
+  var user;
+
+  posts = {}
+
+  fetch('https://www.reddit.com/prefs/feeds')
+    .then((res) => {
+      return res.text();
+    })
+    .then((data) => {
+      var from = data.search('user=') + 5;
+      var to = data.search('">RSS');
+      user = data.substring(from, to);
+      console.log(user);
+
+      from = data.search('feed=') + 5;
+      to = data.search('&amp;user=');
+      var key = data.substring(from, to);
+      console.log(key);
+      return key;
+    })
+    .then((key) => {
+      $.getJSON('https://www.reddit.com/saved.json?feed=' + key, function(data) {
+        console.log(data);
+
+        var content = data.data.children;
+
+        for (var i = 0; i < content.length; i++) {
+          //(var i = content.length-1; i >= 0; i--)
+          //adds every fetched saved post to posts.
+          //traverses from bottom up, but saves first elements last. That is because,
+          //the most recent saved post is the first element in the JSON, and we want it to be last
+          //so we easier can push most recent post to the end of the lists
+          var ir = content.length - 1 - i;
+          console.log(content[ir].data.title);
+          posts[ir] = {}
+          posts[ir].title = content[i].data.title;
+          posts[ir].permalink = content[i].data.permalink;
+          posts[ir].id = content[i].data.id;
+        }
+
+        localStorage.setItem('username', user);
+
+        username = localStorage.getItem('username');
+
+        localStorage.setItem('posts' + username, JSON.stringify(posts));
+
+        console.log(JSON.parse(localStorage.getItem('posts' + username)));
+
+        getFromMemory();
+
+      }).catch((error) => {
+        openErrorMenu("Not logged into reddit")
+      });
+    });
+}
+
+function getFromMemory() {
+  if (localStorage.getItem('categorizedPosts' + username) != null) {
+    categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts' + username));
   }
 
-  localStorage.setItem('posts' + username, JSON.stringify(posts));
+  if (localStorage.getItem('categories' + username) != null) {
+    categories = JSON.parse(localStorage.getItem('categories' + username));
+  } else {
+    categories = ["Uncategorized"];
+    localStorage.setItem('categories' + username, JSON.stringify(categories));
+  }
 
   updateCategorized();
-});
+}
 
 function updateCategorized() {
 

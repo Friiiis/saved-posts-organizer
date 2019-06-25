@@ -7,10 +7,10 @@
 // categorizedPosts   : all user's saved posts categorized by themselves
 // categories         : the user's custom categories
 
-var clientID = localStorage.getItem('clientID');
-var clientSecret = localStorage.getItem('clientSecret');
+// var clientID = localStorage.getItem('clientID');
+// var clientSecret = localStorage.getItem('clientSecret');
 var username = localStorage.getItem('username');
-var password = localStorage.getItem('password');
+// var password = localStorage.getItem('password');
 
 var creds;
 var sw;
@@ -41,8 +41,9 @@ fetch('creds.json')
   .then(function(text) {
     initView("All posts");
     creds = JSON.parse(text);
-    setupSnoowrap();
-    sync();
+    // setupSnoowrap();
+    // sync();
+    getSavedPostsFromFeed();
   });
 
 function setupSnoowrap() {
@@ -69,11 +70,94 @@ function setupSnoowrap() {
   }
 }
 
-document.getElementById("sync").addEventListener("click", sync);
+document.getElementById("sync").addEventListener("click", getSavedPostsFromFeed);
 document.getElementById("settings").addEventListener("click", openSettings);
 document.getElementById("addFolder").addEventListener("click", addFolder);
-document.getElementById("linkToSettings").addEventListener("click", openSettings);
-document.getElementById("linkToGithub").addEventListener("click", openGithub);
+// document.getElementById("linkToSettings").addEventListener("click", openSettings);
+// document.getElementById("linkToGithub").addEventListener("click", openGithub);
+
+
+function getSavedPostsFromFeed() {
+  var user;
+
+  document.getElementById('sync').classList.add("spin");
+
+  posts = {}
+
+  fetch('https://www.reddit.com/prefs/feeds')
+    .then((res) => {
+      return res.text();
+    })
+    .then((data) => {
+      var from = data.search('user=') + 5;
+      var to = data.search('">RSS');
+      user = data.substring(from, to);
+      console.log(user);
+
+      from = data.search('feed=') + 5;
+      to = data.search('&amp;user=');
+      var key = data.substring(from, to);
+      console.log(key);
+      return key;
+    })
+    .then((key) => {
+      $.getJSON('https://www.reddit.com/saved.json?feed=' + key, function(data) {
+        console.log(data);
+
+        var content = data.data.children;
+
+        for (var i = 0; i < content.length; i++) {
+          //(var i = content.length-1; i >= 0; i--)
+          //adds every fetched saved post to posts.
+          //traverses from bottom up, but saves first elements last. That is because,
+          //the most recent saved post is the first element in the JSON, and we want it to be last
+          //so we easier can push most recent post to the end of the lists
+          var ir = content.length - 1 - i;
+          console.log(content[ir].data.title);
+          posts[ir] = {}
+          posts[ir].title = content[i].data.title;
+          posts[ir].permalink = content[i].data.permalink;
+          posts[ir].id = content[i].data.id;
+        }
+
+        localStorage.setItem('username', user);
+
+        username = localStorage.getItem('username');
+
+        localStorage.setItem('posts' + username, JSON.stringify(posts));
+
+        console.log(JSON.parse(localStorage.getItem('posts' + username)));
+
+        getFromMemory();
+
+      }).catch((error) => {
+        openErrorMenu("Couldn't get saved posts. Not logged into reddit.")
+      });
+    });
+}
+
+
+function getFromMemory() {
+  if (localStorage.getItem('posts' + username) != null) {
+    posts = JSON.parse(localStorage.getItem('posts' + username));
+  }
+
+  if (localStorage.getItem('categorizedPosts' + username) != null) {
+    categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts' + username));
+  }
+
+  if (localStorage.getItem('categories' + username) != null) {
+    categories = JSON.parse(localStorage.getItem('categories' + username));
+  } else {
+    categories = ["Uncategorized"];
+    localStorage.setItem('categories' + username, JSON.stringify(categories));
+  }
+
+  updateCategorized();
+}
+
+
+
 
 function sync() {
   console.log(sw);
@@ -172,6 +256,10 @@ function updateCategorized() {
 //sets up the view with categories buttons and default post category (all)
 //should only be called at the start of the session or when adding/deleting a category
 function initView(category) {
+  if (Object.keys(categorizedPosts).length == 0) {
+    return;
+  }
+
   document.getElementById('username').innerHTML = username;
 
   var folders = document.getElementById('folders');
@@ -259,7 +347,7 @@ function updateView(category) {
         var title = categorizedPosts[i].title.replace(/"/g, "'");
         var id = categorizedPosts[i].id;
         var permalink = categorizedPosts[i].permalink;
-        postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Edit category" class="fas fa-edit" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + '</div></div>';
+        postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-edit" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + '</div></div>';
       }
     }
 
@@ -451,26 +539,5 @@ function openErrorMenu(message) {
   document.getElementById('errorMenu').style.opacity = 1;
 }
 
-function getSavedPostsFromFeed() {
-  fetch('https://www.reddit.com/prefs/feeds')
-    .then((res) => {
-      return res.text();
-    })
-    .then((data) => {
-      console.log(data);
-      var from = data.search('feed=') + 5;
-      var to = data.search('&amp;user=');
-      var key = data.substring(from, to);
-      console.log(key);
-      return key;
-    })
-    .then((key) => {
-      $.getJSON('https://www.reddit.com/saved.json?feed=' + key, function(data) {
-        console.log(data);
-      }).catch((error) => {
-        console.log("not logged in");
-      });
-    });
-}
 
-getSavedPostsFromFeed();
+// getSavedPostsFromFeed();

@@ -17,7 +17,7 @@
    },
 
   "permissions": [
-    "<all_urls>",
+    "https://www.reddit.com/*",
     "storage",
     "tabs"
   ],
