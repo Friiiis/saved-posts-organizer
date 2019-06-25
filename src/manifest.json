@@ -23,7 +23,7 @@
   ],
 
   "background": {
-    "scripts": ["jquery.js", "snoowrap-v1.js","background.js"]
+    "scripts": ["jquery.js","background.js"]
   }
 
 }
