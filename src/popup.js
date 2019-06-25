@@ -1,16 +1,10 @@
 // Local storages:
-// clientID           : the user's client ID
-// clientSecret       : the user's client secret
 // username           : the user's reddit username
-// password           : the user's reddit password
 // posts              : all user's saved posts
 // categorizedPosts   : all user's saved posts categorized by themselves
 // categories         : the user's custom categories
 
-// var clientID = localStorage.getItem('clientID');
-// var clientSecret = localStorage.getItem('clientSecret');
 var username = localStorage.getItem('username');
-// var password = localStorage.getItem('password');
 
 var creds;
 var sw;
@@ -19,7 +13,6 @@ var categorizedPosts = {}
 var categories;
 var lastClickedCategory = "All posts";
 var inputVisible = false;
-var errortext = "Failed when loading user info. Possibly caused by an error in log in details or client ID and secret. Click below to check that the information is correct.";
 
 if (localStorage.getItem('posts' + username) != null) {
   posts = JSON.parse(localStorage.getItem('posts' + username));
@@ -36,46 +29,8 @@ if (localStorage.getItem('categories' + username) != null) {
   localStorage.setItem('categories' + username, JSON.stringify(categories));
 }
 
-fetch('creds.json')
-  .then(response => response.text())
-  .then(function(text) {
-    initView("All posts");
-    creds = JSON.parse(text);
-    // setupSnoowrap();
-    // sync();
-    getSavedPostsFromFeed();
-  });
-
-function setupSnoowrap() {
-
-  if ((clientID == null || clientSecret == null || username == null || password == null)
-      || (clientID == "" || clientSecret == "" || username == "" || password == "") ) {
-    errortext = "Before usig this extension, you need to update your reddit user information:";
-    openErrorMenu(errortext);
-  } else {
-    document.getElementById('sync').classList.add("spin");
-
-    //https://github.com/not-an-aardvark/snoowrap
-    try {
-      sw = new snoowrap({
-        userAgent: creds['userAgent'],
-        clientId: clientID,
-        clientSecret: clientSecret,
-        username: username,
-        password: password
-      });
-    } catch(error) {
-      openErrorMenu(errortext);
-    }
-  }
-}
-
 document.getElementById("sync").addEventListener("click", getSavedPostsFromFeed);
-document.getElementById("settings").addEventListener("click", openSettings);
 document.getElementById("addFolder").addEventListener("click", addFolder);
-// document.getElementById("linkToSettings").addEventListener("click", openSettings);
-// document.getElementById("linkToGithub").addEventListener("click", openGithub);
-
 
 function getSavedPostsFromFeed() {
   var user;
@@ -92,28 +47,27 @@ function getSavedPostsFromFeed() {
       var from = data.search('user=') + 5;
       var to = data.search('">RSS');
       user = data.substring(from, to);
-      console.log(user);
+      // console.log(user);
 
       from = data.search('feed=') + 5;
       to = data.search('&amp;user=');
       var key = data.substring(from, to);
-      console.log(key);
+      // console.log(key);
       return key;
     })
     .then((key) => {
       $.getJSON('https://www.reddit.com/saved.json?feed=' + key, function(data) {
-        console.log(data);
+        // console.log(data);
 
         var content = data.data.children;
 
         for (var i = 0; i < content.length; i++) {
-          //(var i = content.length-1; i >= 0; i--)
           //adds every fetched saved post to posts.
           //traverses from bottom up, but saves first elements last. That is because,
           //the most recent saved post is the first element in the JSON, and we want it to be last
           //so we easier can push most recent post to the end of the lists
           var ir = content.length - 1 - i;
-          console.log(content[ir].data.title);
+          // console.log(content[ir].data.title);
           posts[ir] = {}
           posts[ir].title = content[i].data.title;
           posts[ir].permalink = content[i].data.permalink;
@@ -126,7 +80,7 @@ function getSavedPostsFromFeed() {
 
         localStorage.setItem('posts' + username, JSON.stringify(posts));
 
-        console.log(JSON.parse(localStorage.getItem('posts' + username)));
+        // console.log(JSON.parse(localStorage.getItem('posts' + username)));
 
         getFromMemory();
 
@@ -154,45 +108,6 @@ function getFromMemory() {
   }
 
   updateCategorized();
-}
-
-
-
-
-function sync() {
-  console.log(sw);
-  if (sw == undefined) {
-    openErrorMenu(errortext);
-    return;
-  }
-
-  document.getElementById('sync').classList.add("spin");
-
-  posts = {}
-  sw.getMe().getSavedContent().then(function(content) {
-    console.log(content);
-    for (var i = 0; i < content.length; i++) {
-      //(var i = content.length-1; i >= 0; i--)
-      //adds every fetched saved post to posts.
-      //traverses from bottom up, but saves first elements last. That is because,
-      //the most recent saved post is the first element in the JSON, and we want it to be last
-      //so we easier can push most recent post to the end of the lists
-      var ir = content.length - 1 - i;
-      posts[ir] = {}
-      posts[ir].title = content[i]['title'];
-      posts[ir].permalink = content[i]['permalink'];
-      posts[ir].id = content[i]['id'];
-    }
-
-    localStorage.setItem('posts' + username, JSON.stringify(posts));
-
-    console.log(JSON.parse(localStorage.getItem('posts' + username)));
-
-    updateCategorized();
-  }).catch(function(error) {
-    console.log(error);
-    openErrorMenu(errortext);
-  });
 }
 
 function updateCategorized() {
@@ -246,7 +161,7 @@ function updateCategorized() {
   }
 
   localStorage.setItem('categorizedPosts' + username, JSON.stringify(categorizedPosts));
-  console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
+  // console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
 
   localStorage.setItem('lastUpdated' + username, new Date());
 
@@ -296,7 +211,7 @@ function initView(category) {
 }
 
 function updateView(category) {
-  console.log(category);
+  // console.log(category);
   lastClickedCategory = category;
 
   document.getElementById('categoryTitle').innerHTML = category;
@@ -461,11 +376,11 @@ function movePost(id, category) {
 
   updateView(lastClickedCategory);
 
-  console.log("before:");
-  console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
+  // console.log("before:");
+  // console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
   localStorage.setItem('categorizedPosts' + username, JSON.stringify(categorizedPosts));
-  console.log("after:");
-  console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
+  // console.log("after:");
+  // console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
 
   document.getElementById('movePostMenu').style.opacity = 0;
   document.getElementById('movePostMenu').style.visibility = "hidden";
@@ -487,7 +402,7 @@ function addFolder() {
     if (!categories.includes(input.value)) {
       categories.push(input.value);
       localStorage.setItem('categories' + username, JSON.stringify(categories));
-      console.log(JSON.parse(localStorage.getItem('categories' + username)));
+      // console.log(JSON.parse(localStorage.getItem('categories' + username)));
     }
     initView(lastClickedCategory);
     input.style.width = "0px";
@@ -521,23 +436,11 @@ input.addEventListener("keyup",  function(event) {
   }
 });
 
-function openSettings() {
-  if (chrome.runtime.openOptionsPage) {
-    chrome.runtime.openOptionsPage();
-  } else {
-    window.open(chrome.runtime.getURL('options.html'));
-  }
-}
-
-function openGithub() {
-  chrome.tabs.create({active: true, url: 'https://github.com/Friiiis/saved-posts-organizer/blob/master/README.md'});
-}
-
 function openErrorMenu(message) {
   document.getElementById('errorMessage').innerHTML = message;
   document.getElementById('errorMenu').style.visibility = "visible";
   document.getElementById('errorMenu').style.opacity = 1;
 }
 
-
-// getSavedPostsFromFeed();
+initView("All posts");
+getSavedPostsFromFeed();

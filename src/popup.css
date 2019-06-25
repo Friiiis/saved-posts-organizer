@@ -173,15 +173,6 @@ input {
   padding-bottom: 5px;
 }
 
-.errorMenu h1 {
-  font-size: 14px;
-  text-decoration: underline;
-}
-
-.errorMenu h1:hover {
-  cursor: pointer;
-}
-
 .confirmDeletion button {
   margin-top: 5px;
   border: 0;
