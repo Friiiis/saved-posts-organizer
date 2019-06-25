@@ -2,6 +2,8 @@
 
 This extension loads your saved posts on reddit and lets you organize them in custom folders.
 
+I created this extension because I often save a lot of posts, and I needed some way to organize them like I do with bookmarks.
+
 ## Setup guide
 
 The extension works without any setup, as long as you are logged into reddit in your browser. 
