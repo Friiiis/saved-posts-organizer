@@ -6,8 +6,6 @@
 
 var username = localStorage.getItem('username');
 
-var creds;
-var sw;
 var posts = {}
 var categorizedPosts = {}
 var categories;
