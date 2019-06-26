@@ -2,11 +2,11 @@
 
 This extension loads your saved posts on reddit and lets you organize them in custom folders.
 
-I created this extension because I often save a lot of posts, and I needed some way to organize them like I do with bookmarks.
+I created this extension because I often save a lot of posts and I needed some way to organize them like I do with bookmarks.
 
 ## Setup guide
 
-The extension works without any setup, as long as you are logged into reddit in your browser. 
+The extension works without any setup as long as you are logged into reddit in your browser. 
 
 ## Details
 
@@ -14,7 +14,7 @@ The extension fetches data from your personal feed (https://www.reddit.com/prefs
 
 The data will only be saved locally, meaning there is no sync between browsers.
 
-If you log out of your reddit account, all your categories will be saved and all your posts will be organized the same way, when you log back in. But if you remove the extension from your browser, all categories will be lost and your posts will no longer be organized, if you should reinstall the extension later.
+If you log out of your reddit account, all your categories will be saved and all your posts will be organized the same way when you log back in. If you remove the extension from your browser, all categories will be lost and your posts will no longer be organized if you should reinstall the extension later.
 
 Please add an issue if you expirence any bugs.
 
