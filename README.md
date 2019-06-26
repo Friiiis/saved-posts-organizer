@@ -2,7 +2,7 @@
 
 This extension loads your saved posts on reddit and lets you organize them in custom folders.
 
-I created this extension because I often save a lot of posts and I needed some way to organize them like I do with bookmarks.
+I created this extension because I often save a lot of posts and I needed a way to organize them like I do with bookmarks.
 
 ## Setup guide
 
@@ -28,15 +28,15 @@ Please add an issue if you expirence any bugs.
 
 <img src="src/images/readme/programming.png" width="250">
 
-### Add new category
+### Add a new category
 
 <img src="src/images/readme/addcategory.png" width="250">
 
-### Move post to some category
+### Move post to a category
 
 <img src="src/images/readme/moveposts.png" width="250">
 
-### Delete category
+### Delete a category
 
 <img src="src/images/readme/deletecategory.png" width="250">
 
