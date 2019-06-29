@@ -1,25 +1,24 @@
 {
-  "name": "Saved posts organizer",
-  "version": "1.0",
+  "name": "Reddit saved posts organizer",
+  "version": "1.1.1",
   "manifest_version": 2,
 
   "minimum_chrome_version": "46",
   "content_security_policy": "script-src 'self' 'sha256-WOdSzz11/3cpqOdrm89LBL2UPwEU9EhbDtMy2OciEhs='",
 
-  "description": "Lets you display and organize saved posts from your reddit account. You must be logged into reddit on your browser, for the extension to work.",
+  "description": "Lets you display and organize saved posts from your reddit account.",
   "icons": {
     "128": "images/logo.png"
   },
 
   "browser_action": {
-     "default_title": "Saved posts organizer",
+     "default_title": "Reddit saved posts organizer",
      "default_popup": "popup.html"
    },
 
   "permissions": [
     "https://www.reddit.com/*",
-    "storage",
-    "tabs"
+    "storage"
   ],
 
   "background": {

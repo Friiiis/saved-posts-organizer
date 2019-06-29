@@ -10,6 +10,8 @@ body {
   border-left: 2px solid white;
   border-right: 1px solid white;
   border-bottom: 1px solid white;
+  font-family: sans-serif;
+  font-size: 13px;
 }
 
 h1 {

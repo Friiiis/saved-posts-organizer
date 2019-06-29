@@ -67,9 +67,28 @@ function getSavedPostsFromFeed() {
           var ir = content.length - 1 - i;
           // console.log(content[ir].data.title);
           posts[ir] = {}
-          posts[ir].title = content[i].data.title;
-          posts[ir].permalink = content[i].data.permalink;
-          posts[ir].id = content[i].data.id;
+
+          //tests if the saved element is a post (t3) or a comment (t1)
+          //thanks to 19smitgr for heads up on this issue
+          if (content[i].kind == 't3') { //t3 == post
+            posts[ir].title = content[i].data.title;
+            posts[ir].permalink = content[i].data.permalink;
+            posts[ir].id = content[i].data.id;
+            posts[ir].type = "t3";
+          } else if (content[i].kind == 't1') { //t1 == comment
+            posts[ir].title = content[i].data.link_title;
+            posts[ir].permalink = content[i].data.permalink;
+            posts[ir].id = content[i].data.id;
+            posts[ir].type = "t1";
+          } else {
+            //if it is niether a post or a comment, we skip this element
+            continue;
+          }
+
+          if (posts[ir].permalink.startsWith("/r/")) {
+            posts[ir].permalink = "https://www.reddit.com" + posts[ir].permalink;
+          }
+
         }
 
         localStorage.setItem('username', user);
@@ -116,9 +135,20 @@ function updateCategorized() {
     var postFound = false;
 
     for (var j = 0; j < Object.keys(posts).length; j++) {
-      if (posts[j]['title'] == categorizedPosts[i]['title']) {
-          var postFound = true;
-          break;
+      if (posts[j]['id'] == categorizedPosts[i]['id']) {
+
+        if (posts[j].type == "t3") {
+          categorizedPosts[i].type = "";
+        } else if (posts[j].type == "t1") {
+          categorizedPosts[i].type = " (comment)";
+        }
+
+        if (categorizedPosts[i].permalink.startsWith("/r/")) {
+          categorizedPosts[i].permalink = "https://www.reddit.com" + categorizedPosts[i].permalink;
+        }
+
+        var postFound = true;
+        break;
       } else {
         continue;
       }
@@ -141,7 +171,7 @@ function updateCategorized() {
       if (categorizedPosts[j] == undefined) {
         break;
       }
-      if (categorizedPosts[j]['title'] == posts[i]['title']) {
+      if (categorizedPosts[j]['id'] == posts[i]['id']) {
           postFound = true;
           break;
       } else {
@@ -152,6 +182,11 @@ function updateCategorized() {
     if (!postFound) {
       var k = Object.keys(categorizedPosts).length;
       categorizedPosts[k] = posts[i];
+      if (posts[i].type == "t3") {
+        categorizedPosts[k].type = "";
+      } else if (posts[i].type == "t1") {
+        categorizedPosts[k].type = " (comment)";
+      }
       categorizedPosts[k].category = 'Uncategorized';
     }
 
@@ -227,20 +262,26 @@ function updateView(category) {
   postContainer = document.getElementById('postContainer');
   postContainer.innerHTML = "";
 
+  // console.log(categorizedPosts);
+
   if (category == "All posts") {
     //adds posts to DOM
     for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+      if (categorizedPosts[i].title == undefined) {
+        continue;
+      }
       var title = categorizedPosts[i].title.replace(/"/g, "'");
       var id = categorizedPosts[i].id;
       var permalink = categorizedPosts[i].permalink;
-      postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-edit" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + '</div></div>';
+      var type = categorizedPosts[i].type;
+      postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-folder-open" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + type + '</div></div>';
     }
 
     //adds onclick listeners to posts
     for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
       var s = categorizedPosts[i].id;
       document.getElementById(categorizedPosts[i].id).addEventListener("click", function() {
-        var href = "http://reddit.com" + this.dataset.link;
+        var href = this.dataset.link;
         chrome.tabs.create({active: true, url: href});
       });
     }
@@ -257,10 +298,14 @@ function updateView(category) {
     //adds posts to DOM
     for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
       if (categorizedPosts[i].category == category) {
+        if (categorizedPosts[i].title == undefined) {
+          continue;
+        }
         var title = categorizedPosts[i].title.replace(/"/g, "'");
         var id = categorizedPosts[i].id;
         var permalink = categorizedPosts[i].permalink;
-        postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-edit" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + '</div></div>';
+        var type = categorizedPosts[i].type;
+        postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-folder-open" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + type + '</div></div>';
       }
     }
 
@@ -268,7 +313,7 @@ function updateView(category) {
     for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
       if (categorizedPosts[i].category == category) {
         document.getElementById(categorizedPosts[i].id).addEventListener("click", function() {
-          var href = "http://reddit.com" + this.dataset.link;
+          var href = this.dataset.link;
           chrome.tabs.create({active: true, url: href});
         });
       }
