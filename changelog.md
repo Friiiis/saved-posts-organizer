@@ -7,6 +7,8 @@ It is now possible to see saved comments aswell. Saved comments will be shown as
 
 Fixed some wrong icons.
 
+Fixed bug in permissions that made Chrome say, that the extension needs access to browser history.
+
 ## 1.0.0
 
 Initial release
