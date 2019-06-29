@@ -28,6 +28,10 @@ If you log out of your reddit account, all your categories will be saved and all
 
 Please add an issue if you expirence any bugs.
 
+## Changelog
+
+[Changelog](https://github.com/Friiiis/saved-posts-organizer/blob/master/changelog.md)
+
 ## Screenshots
 
 ### All saved posts
