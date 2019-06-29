@@ -64,12 +64,15 @@ function getSavedPostsFromFeed() {
           //traverses from bottom up, but saves first elements last. That is because,
           //the most recent saved post is the first element in the JSON, and we want it to be last
           //so we easier can push most recent post to the end of the lists
-          var ir = content.length - 1 - i;
-          // console.log(content[ir].data.title);
-          posts[ir] = {}
-          posts[ir].title = content[i].data.title;
-          posts[ir].permalink = content[i].data.permalink;
-          posts[ir].id = content[i].data.id;
+
+          var currentPostIndex = posts.length;
+
+          if (content[i].kind == 't3') {
+            posts[currentPostIndex] = {};
+            posts[currentPostIndex].title = content[i].data.title;
+            posts[currentPostIndex].permalink = content[i].data.permalink;
+            posts[currentPostIndex].id = content[i].data.id;
+          }
         }
 
         localStorage.setItem('username', user);
@@ -131,7 +134,7 @@ function updateCategorized() {
   }
 
   categorizedPosts = tempJSON;
-
+  
 
   //checks if there is any new saved posts that have not yet been categorized
   for (var i = 0; i < Object.keys(posts).length; i++) {

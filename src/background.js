@@ -31,12 +31,16 @@ function getSavedPostsFromFeed() {
         var content = data.data.children;
 
         for (var i = 0; i < content.length; i++) {
-          var ir = content.length - 1 - i;
+          var currentIndex = Object.keys(posts).length;
           // console.log(content[ir].data.title);
-          posts[ir] = {}
-          posts[ir].title = content[i].data.title;
-          posts[ir].permalink = content[i].data.permalink;
-          posts[ir].id = content[i].data.id;
+
+          // make sure it is a post (t3) as per https://redditclient.readthedocs.io/en/latest/reference/#types-of-thing
+          if (content[i].kind == 't3') {
+            posts[currentIndex] = {};
+            posts[currentIndex].title = content[i].data.title;
+            posts[currentIndex].permalink = content[i].data.permalink;
+            posts[currentIndex].id = content[i].data.id;
+          }
         }
 
         localStorage.setItem('username', user);
