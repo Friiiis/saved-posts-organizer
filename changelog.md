@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2
+
+Fixed bug when removing posts from your reddit saved links.
+
 ## 1.1.1
 
 Fixed bug that caused the app to not work at all for users that have saved comments (instead of only having saved posts). Thanks to GitHub user 19smitgr for the help.
