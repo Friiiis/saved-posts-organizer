@@ -135,6 +135,9 @@ function updateCategorized() {
     var postFound = false;
 
     for (var j = 0; j < Object.keys(posts).length; j++) {
+      if (categorizedPosts[i] == undefined) {
+        break;
+      }
       if (posts[j]['id'] == categorizedPosts[i]['id']) {
 
         if (posts[j].type == "t3") {
@@ -155,22 +158,19 @@ function updateCategorized() {
     }
 
     if (postFound) { //adds all matching posts to a temporary array, that will be assigned to categorizedPosts
-      tempJSON[i] = categorizedPosts[i];
+      tempJSON[Object.keys(tempJSON).length] = categorizedPosts[i];
     }
 
   }
 
   categorizedPosts = tempJSON;
 
-
   //checks if there is any new saved posts that have not yet been categorized
   for (var i = 0; i < Object.keys(posts).length; i++) {
     var postFound = false;
 
     for (var j = 0; j < Object.keys(categorizedPosts).length; j++) {
-      if (categorizedPosts[j] == undefined) {
-        break;
-      }
+
       if (categorizedPosts[j]['id'] == posts[i]['id']) {
           postFound = true;
           break;
