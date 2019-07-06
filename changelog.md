@@ -12,7 +12,7 @@ Added "try again" button when fetching fails due to either bad connection or not
 
 Fixed bug when removing posts from your reddit saved links.
 
-Added [privacy policy](https://github.com/Friiiis/saved-posts-organizer/blob/master/privacypolicy.md)
+Added [privacy policy](https://github.com/Friiiis/saved-posts-organizer/blob/master/privacypolicy.md).
 
 ## 1.1.1
 
