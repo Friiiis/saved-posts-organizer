@@ -36,23 +36,23 @@ Please add an issue if you expirence any bugs.
 
 ### All saved posts
 
-<img src="src/images/readme/allposts.png" width="250">
+<img src="images/readme/allposts.png" width="250">
 
 ### Posts inside a category "Programming"
 
-<img src="src/images/readme/programming.png" width="250">
+<img src="images/readme/programming.png" width="250">
 
 ### Add a new category
 
-<img src="src/images/readme/addcategory.png" width="250">
+<img src="images/readme/addcategory.png" width="250">
 
 ### Move post to a category
 
-<img src="src/images/readme/moveposts.png" width="250">
+<img src="images/readme/moveposts.png" width="250">
 
 ### Delete a category
 
-<img src="src/images/readme/deletecategory.png" width="250">
+<img src="images/readme/deletecategory.png" width="250">
 
 ## Licens 
 
