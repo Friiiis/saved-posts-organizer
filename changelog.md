@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.4
+
+Fixed a bug where links saved after the release of v1.1.3 would have "t3" (for posts) and "t1" (for comments) after their title.
+
 ## 1.1.3
 
 Cleaned up a lot of duplicated and too complicated code.
