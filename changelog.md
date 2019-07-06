@@ -12,6 +12,8 @@ Added "try again" button when fetching fails due to either bad connection or not
 
 Fixed bug when removing posts from your reddit saved links.
 
+Added [privacy policy](https://github.com/Friiiis/saved-posts-organizer/blob/master/privacypolicy.md)
+
 ## 1.1.1
 
 Fixed bug that caused the app to not work at all for users that have saved comments (instead of only having saved posts). Thanks to GitHub user 19smitgr for the help.
