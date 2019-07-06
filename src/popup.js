@@ -1,3 +1,5 @@
+import { fetchSavedPosts } from '/fetchdata.js'
+
 // Local storages:
 // username           : the user's reddit username
 // posts              : all user's saved posts
@@ -28,177 +30,46 @@ if (localStorage.getItem('categories' + username) != null) {
 }
 
 document.getElementById("sync").addEventListener("click", getSavedPostsFromFeed);
+document.getElementById("tryAgain").addEventListener("click", getSavedPostsFromFeed);
 document.getElementById("addFolder").addEventListener("click", addFolder);
 
+var input = document.getElementById('input');
+
+$("input").focusout(function(){
+  if (inputVisible) {
+    input.style.width = "0px";
+    setTimeout(function () {
+      input.style.opacity = 0;
+      inputVisible = false;
+    }, 500);
+  }
+});
+
+input.addEventListener("keyup",  function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("addFolder").click();
+  }
+});
+
+// fetches the user's api key and username. The api key will be used
+// to fetch the user's saved posts JSON feed. See fetchdata.js for
+// the code that handles fetching.
 function getSavedPostsFromFeed() {
-  var user;
-
   document.getElementById('sync').classList.add("spin");
-
-  posts = {}
-
-  fetch('https://www.reddit.com/prefs/feeds')
-    .then((res) => {
-      return res.text();
+  closeErrorMenu();
+  fetchSavedPosts()
+    .then((message) => {
+      console.log(message);
+      initView(lastClickedCategory);
     })
-    .then((data) => {
-      var from = data.search('user=') + 5;
-      var to = data.search('">RSS');
-      user = data.substring(from, to);
-      // console.log(user);
-
-      from = data.search('feed=') + 5;
-      to = data.search('&amp;user=');
-      var key = data.substring(from, to);
-      // console.log(key);
-      return key;
-    })
-    .then((key) => {
-      $.getJSON('https://www.reddit.com/saved.json?feed=' + key, function(data) {
-        // console.log(data);
-
-        var content = data.data.children;
-
-        for (var i = 0; i < content.length; i++) {
-          //adds every fetched saved post to posts.
-          //traverses from bottom up, but saves first elements last. That is because,
-          //the most recent saved post is the first element in the JSON, and we want it to be last
-          //so we easier can push most recent post to the end of the lists
-          var ir = content.length - 1 - i;
-          // console.log(content[ir].data.title);
-          posts[ir] = {}
-
-          //tests if the saved element is a post (t3) or a comment (t1)
-          //thanks to 19smitgr for heads up on this issue
-          if (content[i].kind == 't3') { //t3 == post
-            posts[ir].title = content[i].data.title;
-            posts[ir].permalink = content[i].data.permalink;
-            posts[ir].id = content[i].data.id;
-            posts[ir].type = "t3";
-          } else if (content[i].kind == 't1') { //t1 == comment
-            posts[ir].title = content[i].data.link_title;
-            posts[ir].permalink = content[i].data.permalink;
-            posts[ir].id = content[i].data.id;
-            posts[ir].type = "t1";
-          } else {
-            //if it is niether a post or a comment, we skip this element
-            continue;
-          }
-
-          if (posts[ir].permalink.startsWith("/r/")) {
-            posts[ir].permalink = "https://www.reddit.com" + posts[ir].permalink;
-          }
-
-        }
-
-        localStorage.setItem('username', user);
-
-        username = localStorage.getItem('username');
-
-        localStorage.setItem('posts' + username, JSON.stringify(posts));
-
-        // console.log(JSON.parse(localStorage.getItem('posts' + username)));
-
-        getFromMemory();
-
-      }).catch((error) => {
-        openErrorMenu("Couldn't get saved posts. Not logged into reddit.")
-      });
+    .catch((error) => {
+      console.log(error);
+      openErrorMenu(error);
     });
-}
-
-
-function getFromMemory() {
-  if (localStorage.getItem('posts' + username) != null) {
-    posts = JSON.parse(localStorage.getItem('posts' + username));
-  }
-
-  if (localStorage.getItem('categorizedPosts' + username) != null) {
-    categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts' + username));
-  }
-
-  if (localStorage.getItem('categories' + username) != null) {
-    categories = JSON.parse(localStorage.getItem('categories' + username));
-  } else {
-    categories = ["Uncategorized"];
-    localStorage.setItem('categories' + username, JSON.stringify(categories));
-  }
-
-  updateCategorized();
-}
-
-function updateCategorized() {
-  tempJSON = {}
-
-  //checks if there is any previously saved and categorized posts, that have now been unsaved
-  for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
-    var postFound = false;
-
-    for (var j = 0; j < Object.keys(posts).length; j++) {
-      if (categorizedPosts[i] == undefined) {
-        break;
-      }
-      if (posts[j]['id'] == categorizedPosts[i]['id']) {
-
-        if (posts[j].type == "t3") {
-          categorizedPosts[i].type = "";
-        } else if (posts[j].type == "t1") {
-          categorizedPosts[i].type = " (comment)";
-        }
-
-        if (categorizedPosts[i].permalink.startsWith("/r/")) {
-          categorizedPosts[i].permalink = "https://www.reddit.com" + categorizedPosts[i].permalink;
-        }
-
-        var postFound = true;
-        break;
-      } else {
-        continue;
-      }
-    }
-
-    if (postFound) { //adds all matching posts to a temporary array, that will be assigned to categorizedPosts
-      tempJSON[Object.keys(tempJSON).length] = categorizedPosts[i];
-    }
-
-  }
-
-  categorizedPosts = tempJSON;
-
-  //checks if there is any new saved posts that have not yet been categorized
-  for (var i = 0; i < Object.keys(posts).length; i++) {
-    var postFound = false;
-
-    for (var j = 0; j < Object.keys(categorizedPosts).length; j++) {
-
-      if (categorizedPosts[j]['id'] == posts[i]['id']) {
-          postFound = true;
-          break;
-      } else {
-        continue;
-      }
-    }
-
-    if (!postFound) {
-      var k = Object.keys(categorizedPosts).length;
-      categorizedPosts[k] = posts[i];
-      if (posts[i].type == "t3") {
-        categorizedPosts[k].type = "";
-      } else if (posts[i].type == "t1") {
-        categorizedPosts[k].type = " (comment)";
-      }
-      categorizedPosts[k].category = 'Uncategorized';
-    }
-
-
-  }
-
-  localStorage.setItem('categorizedPosts' + username, JSON.stringify(categorizedPosts));
-  // console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
-
-  localStorage.setItem('lastUpdated' + username, new Date());
-
-  initView(lastClickedCategory);
 }
 
 //sets up the view with categories buttons and default post category (all)
@@ -259,7 +130,7 @@ function updateView(category) {
     }
   }
 
-  postContainer = document.getElementById('postContainer');
+  var postContainer = document.getElementById('postContainer');
   postContainer.innerHTML = "";
 
   // console.log(categorizedPosts);
@@ -331,7 +202,7 @@ function updateView(category) {
 
   }
 
-  d = new Date(localStorage.getItem('lastUpdated' + username));
+  var d = new Date(localStorage.getItem('lastUpdated' + username));
   var minutes = d.getMinutes();
   var hours = d.getHours();
   if (minutes < 10) {
@@ -457,32 +328,15 @@ function addFolder() {
   }
 }
 
-input = document.getElementById('input');
-
-$("input").focusout(function(){
-  if (inputVisible) {
-    input.style.width = "0px";
-    setTimeout(function () {
-      input.style.opacity = 0;
-      inputVisible = false;
-    }, 500);
-  }
-});
-
-input.addEventListener("keyup",  function(event) {
-  // Number 13 is the "Enter" key on the keyboard
-  if (event.keyCode === 13) {
-    // Cancel the default action, if needed
-    event.preventDefault();
-    // Trigger the button element with a click
-    document.getElementById("addFolder").click();
-  }
-});
-
 function openErrorMenu(message) {
   document.getElementById('errorMessage').innerHTML = message;
   document.getElementById('errorMenu').style.visibility = "visible";
   document.getElementById('errorMenu').style.opacity = 1;
+}
+
+function closeErrorMenu() {
+  document.getElementById('errorMenu').style.opacity = 0;
+  document.getElementById('errorMenu').style.visibility = "hidden";
 }
 
 initView("All posts");

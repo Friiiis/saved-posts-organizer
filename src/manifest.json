@@ -22,7 +22,7 @@
   ],
 
   "background": {
-    "scripts": ["jquery.js","background.js"]
+    "page": "background.html"
   }
 
 }

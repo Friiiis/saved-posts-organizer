@@ -12,6 +12,7 @@ body {
   border-bottom: 1px solid white;
   font-family: sans-serif;
   font-size: 13px;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -64,7 +65,7 @@ header i:hover {
   color: rgba(255, 255, 255, 0.8);
 }
 
-footer i, header i, .title i, .editPost i, .folder, .post, .confirmDeletion button:hover {
+footer i, header i, .title i, .editPost i, .folder, .post, .tryAgain, .confirmDeletion button:hover {
   cursor: pointer;
 }
 
@@ -171,8 +172,8 @@ input {
 .errorMenu, .confirmDeletion {
   /* visibility: visible; */
   text-align: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .confirmDeletion button {
