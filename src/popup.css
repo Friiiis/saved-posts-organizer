@@ -162,11 +162,15 @@ input {
   opacity: 0;
 }
 
+.movePostMenu {
+  padding-top: 5px;
+}
+
 .movePostMenu i {
   position: absolute;
   left: 0;
   top: 0;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .errorMenu, .confirmDeletion {

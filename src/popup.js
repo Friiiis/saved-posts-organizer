@@ -144,7 +144,14 @@ function updateView(category) {
       var title = categorizedPosts[i].title.replace(/"/g, "'");
       var id = categorizedPosts[i].id;
       var permalink = categorizedPosts[i].permalink;
-      var type = categorizedPosts[i].type;
+      var type;
+      // legacy code: the type text (if a link is a comment or a post) was stored
+      // in "type" variable until 1.1.3. It is now stored in "typeText" variable
+      if (categorizedPosts[i].typeText != undefined) {
+        type = categorizedPosts[i].typeText;
+      } else {
+        type = categorizedPosts[i].type;
+      }
       postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-folder-open" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + type + '</div></div>';
     }
 
