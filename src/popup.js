@@ -135,9 +135,9 @@ function updateView(category) {
 
   // console.log(categorizedPosts);
 
-  if (category == "All posts") {
-    //adds posts to DOM
-    for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+  //adds posts to DOM
+  for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+    if (category == "All posts" || category == categorizedPosts[i].category) {
       if (categorizedPosts[i].title == undefined) {
         continue;
       }
@@ -154,60 +154,27 @@ function updateView(category) {
       }
       postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-folder-open" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + type + '</div></div>';
     }
+  }
 
-    //adds onclick listeners to posts
-    for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
-      var s = categorizedPosts[i].id;
+  //adds onclick listeners to posts
+  for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+    if (category == "All posts" || category == categorizedPosts[i].category) {
       document.getElementById(categorizedPosts[i].id).addEventListener("click", function() {
         var href = this.dataset.link;
         chrome.tabs.create({active: true, url: href});
       });
     }
+  }
 
-    //adds onclick listeners to editpost-buttons
-    for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+  //adds onclick listeners to editpost-buttons
+  for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+    if (category == "All posts" || category == categorizedPosts[i].category) {
       document.getElementById(categorizedPosts[i].id + "button").addEventListener("click", function() {
         editPostCategory(this.id.replace("button", ""));
       });
     }
-
-  } else {
-
-    //adds posts to DOM
-    for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
-      if (categorizedPosts[i].category == category) {
-        if (categorizedPosts[i].title == undefined) {
-          continue;
-        }
-        var title = categorizedPosts[i].title.replace(/"/g, "'");
-        var id = categorizedPosts[i].id;
-        var permalink = categorizedPosts[i].permalink;
-        var type = categorizedPosts[i].type;
-        postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-folder-open" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + type + '</div></div>';
-      }
-    }
-
-    //adds onclick listeners to posts
-    for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
-      if (categorizedPosts[i].category == category) {
-        document.getElementById(categorizedPosts[i].id).addEventListener("click", function() {
-          var href = this.dataset.link;
-          chrome.tabs.create({active: true, url: href});
-        });
-      }
-    }
-
-    //adds onclick listeners to editpost-buttons
-    for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
-      if (categorizedPosts[i].category == category) {
-        document.getElementById(categorizedPosts[i].id + "button").addEventListener("click", function() {
-          editPostCategory(this.id.replace("button", ""));
-        });
-
-      }
-    }
-
   }
+
 
   var d = new Date(localStorage.getItem('lastUpdated' + username));
   var minutes = d.getMinutes();
