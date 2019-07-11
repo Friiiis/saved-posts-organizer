@@ -54,6 +54,10 @@ Please add an issue if you expirence any bugs.
 
 <img src="images/readme/deletecategory.png" width="250">
 
+## Privacy
+
+[Privacy policy](https://github.com/Friiiis/saved-posts-organizer/blob/master/privacypolicy.md)
+
 ## Licens 
 
 This software is licensed under GNU General Public License v3.0, also known as [CopyLeft](https://en.wikipedia.org/wiki/Copyleft). This means that anyone is free to copy and reuse this software, as long as the resulting software is also licensed under CopyLeft.
