@@ -48,7 +48,7 @@ Please add an issue if you expirence any bugs.
 
 ### Move post to a category
 
-<img src="images/readme/moveposts.png" width="250">
+<img src="images/readme/movepost.png" width="250">
 
 ### Delete a category
 
