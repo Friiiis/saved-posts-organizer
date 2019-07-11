@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.5
+
+1.1.4 only fixed the bug when displaying all posts. This update fixes the bug for all categories. 
+
+Fixed some reduntant code.
+
 ## 1.1.4
 
 Fixed a bug where links saved after the release of v1.1.3 would have "t3" (for posts) and "t1" (for comments) after their title.
