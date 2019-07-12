@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.6
+
+(not yet released)
+If you save new posts or remove saved posts while the extension is open on your browser (e.g. saving a post on your phone), the extension will now dynamically show the updated content. Previously it would fetch the new dataset but not update the view until the user closed and reopened the popup.
+
 ## 1.1.5
 
 1.1.4 only fixed the bug when displaying all posts. This update fixes the bug for all categories. 

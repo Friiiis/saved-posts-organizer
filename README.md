@@ -12,7 +12,7 @@ I created this extension because I often save a lot of posts and I needed a way 
 
 ### Firefox
 
-Coming soon.
+[Mozilla Addons](https://addons.mozilla.org/addon/reddit-saved-posts-organizer/) 
 
 ## Setup guide
 
@@ -48,11 +48,15 @@ Please add an issue if you expirence any bugs.
 
 ### Move post to a category
 
-<img src="images/readme/moveposts.png" width="250">
+<img src="images/readme/movepost.png" width="250">
 
 ### Delete a category
 
 <img src="images/readme/deletecategory.png" width="250">
+
+## Privacy
+
+[Privacy policy](https://github.com/Friiiis/saved-posts-organizer/blob/master/privacypolicy.md)
 
 ## Licens 
 
