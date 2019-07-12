@@ -12,7 +12,7 @@ I created this extension because I often save a lot of posts and I needed a way 
 
 ### Firefox
 
-Coming soon.
+[Mozilla Addons](https://addons.mozilla.org/addon/reddit-saved-posts-organizer/) 
 
 ## Setup guide
 
