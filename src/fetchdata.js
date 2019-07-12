@@ -183,6 +183,10 @@ function updateCategorizedPosts() {
 
       for (var j = 0; j < Object.keys(categorizedPosts).length; j++) {
 
+        if (categorizedPosts[j] == undefined) {
+          continue;
+        }
+
         if (categorizedPosts[j]['id'] == posts[i]['id']) {
           postFound = true;
           break;
