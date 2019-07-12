@@ -70,9 +70,7 @@ function getJSONFeed(key) {
 function addDataToPosts(key, after) {
   return new Promise(function (resolve, reject){
     $.getJSON('https://www.reddit.com/saved.json?feed=' + key + "&after=" + after, function(data) {
-      console.log(data);
-
-      console.log(Object.keys(posts).length);
+      // console.log(data);
 
       var content = data.data.children;
 
@@ -203,7 +201,7 @@ function updateCategorizedPosts() {
 
     localStorage.setItem('categorizedPosts' + username, JSON.stringify(categorizedPosts));
 
-    console.log("categorizedPosts:");
+    console.log("categorized posts:");
     console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
 
     localStorage.setItem('lastUpdated' + username, new Date());
