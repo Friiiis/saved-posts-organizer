@@ -48,53 +48,78 @@ function getUsernameAndKey(source) {
 
 function getJSONFeed(key) {
   return new Promise(function (resolve, reject){
-    $.getJSON('https://www.reddit.com/saved.json?feed=' + key, function(data) {
+      posts = {}
+
+      addDataToPosts(key)
+        .then(() => {
+          localStorage.setItem('username', username);
+
+          localStorage.setItem('posts' + username, JSON.stringify(posts));
+
+          console.log("posts fetched from reddit (not yet categorized):");
+          console.log(JSON.parse(localStorage.getItem('posts' + username)));
+
+          resolve();
+        })
+        .catch((error) => {
+          reject(error);
+        });
+  });
+}
+
+function addDataToPosts(key, after) {
+  return new Promise(function (resolve, reject){
+    $.getJSON('https://www.reddit.com/saved.json?feed=' + key + "&after=" + after, function(data) {
       console.log(data);
 
-      posts = {}
+      console.log(Object.keys(posts).length);
 
       var content = data.data.children;
 
-      for (var i = 0; i < content.length; i++) {
-        //adds every fetched saved post to posts.
-        //traverses from bottom up, but saves first elements last. That is because,
-        //the most recent saved post is the first element in the JSON, and we want it to be last
-        //so we easier can push most recent post to the end of the lists
-        var ir = content.length - 1 - i;
-        // console.log(content[ir].data.title);
-        posts[ir] = {}
+      var j = Object.keys(posts).length;
 
-        posts[ir].permalink = content[i].data.permalink;
-        posts[ir].id = content[i].data.id;
+      for (var i = 0; i < content.length; i++) {
+        //adds every fetched saved post on the current page to posts.
+        posts[j] = {}
+
+        posts[j].permalink = content[i].data.permalink;
+        posts[j].id = content[i].data.id;
         //tests if the saved element is a post (t3) or a comment (t1)
         //thanks to GitHub user 19smitgr for heads up on this issue
         if (content[i].kind == 't3') { //t3 == post
-          posts[ir].title = content[i].data.title;
-          posts[ir].type = "t3";
-          posts[ir].typeText = "";
+          posts[j].title = content[i].data.title;
+          posts[j].type = "t3";
+          posts[j].typeText = "";
         } else if (content[i].kind == 't1') { //t1 == comment
-          posts[ir].title = content[i].data.link_title;
-          posts[ir].type = "t1";
-          posts[ir].typeText = " (comment)";
+          posts[j].title = content[i].data.link_title;
+          posts[j].type = "t1";
+          posts[j].typeText = " (comment)";
         } else {
-          //if it is niether a post or a comment, we skip this element
+          // if it is niether a post or a comment, we skip this element
           continue;
         }
 
-        if (posts[ir].permalink.startsWith("/r/")) {
-          posts[ir].permalink = "https://www.reddit.com" + posts[ir].permalink;
+        if (posts[j].permalink.startsWith("/r/")) {
+          posts[j].permalink = "https://www.reddit.com" + posts[j].permalink;
         }
+
+        j++;
 
       }
 
-      localStorage.setItem('username', username);
-
-      localStorage.setItem('posts' + username, JSON.stringify(posts));
-
-      console.log("posts fetched from reddit (not yet categorized):");
-      console.log(JSON.parse(localStorage.getItem('posts' + username)));
-
-      resolve(data);
+      // checks if there is more data to be pulled. If there is, we call the function recursively
+      if (data.data.after != null) {
+        addDataToPosts(key, data.data.after)
+          .then((afterData) => {
+            resolve(data + afterData);
+          })
+          .catch((error) => {
+            console.log(error);
+            reject("Couldn't get saved posts. Not logged into reddit.");
+          });
+      } else {
+        resolve(data);
+      }
 
     }).catch((error) => {
       // error on this stage, will be caused by wrong api-key,
@@ -147,7 +172,7 @@ function updateCategorizedPosts() {
       }
 
       if (postFound) { //adds all matching posts to a temporary array, that will be assigned to categorizedPosts
-        tempJSON[Object.keys(tempJSON).length] = categorizedPosts[i];
+        tempJSON[j] = categorizedPosts[i];
       }
 
     }
