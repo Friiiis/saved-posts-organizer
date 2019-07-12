@@ -49,7 +49,9 @@ function getUsernameAndKey(source) {
 function getJSONFeed(key) {
   return new Promise(function (resolve, reject){
     $.getJSON('https://www.reddit.com/saved.json?feed=' + key, function(data) {
-      // console.log(data);
+      console.log(data);
+
+      posts = {}
 
       var content = data.data.children;
 

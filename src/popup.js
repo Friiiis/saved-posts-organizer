@@ -6,28 +6,14 @@ import { fetchSavedPosts } from '/fetchdata.js'
 // categorizedPosts   : all user's saved posts categorized by themselves
 // categories         : the user's custom categories
 
-var username = localStorage.getItem('username');
-
+var username;
 var posts = {}
 var categorizedPosts = {}
 var categories;
 var lastClickedCategory = "All posts";
+
 var inputVisible = false;
-
-if (localStorage.getItem('posts' + username) != null) {
-  posts = JSON.parse(localStorage.getItem('posts' + username));
-}
-
-if (localStorage.getItem('categorizedPosts' + username) != null) {
-  categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts' + username));
-}
-
-if (localStorage.getItem('categories' + username) != null) {
-  categories = JSON.parse(localStorage.getItem('categories' + username));
-} else {
-  categories = ["Uncategorized"];
-  localStorage.setItem('categories' + username, JSON.stringify(categories));
-}
+var isFetching = false;
 
 document.getElementById("sync").addEventListener("click", getSavedPostsFromFeed);
 document.getElementById("tryAgain").addEventListener("click", getSavedPostsFromFeed);
@@ -55,20 +41,26 @@ input.addEventListener("keyup",  function(event) {
   }
 });
 
+
+
 // fetches the user's api key and username. The api key will be used
 // to fetch the user's saved posts JSON feed. See fetchdata.js for
 // the code that handles fetching.
 function getSavedPostsFromFeed() {
+  isFetching = true;
   document.getElementById('sync').classList.add("spin");
   closeErrorMenu();
   fetchSavedPosts()
     .then((message) => {
       console.log(message);
-      initView(lastClickedCategory);
+      isFetching = false;
+      updateDataFromMemory()
+        .then(() => { updateView(lastClickedCategory) });
     })
     .catch((error) => {
       console.log(error);
       openErrorMenu(error);
+      isFetching = false;
     });
 }
 
@@ -110,8 +102,34 @@ function initView(category) {
     updateView("All posts");
   });
 
-  updateView(category);
+  // updateView(lastClickedCategory);
 
+  updateDataFromMemory()
+    .then(() => updateView(category));
+
+}
+
+function updateDataFromMemory() {
+  return new Promise(function (resolve, reject){
+    username = localStorage.getItem('username');
+
+    if (localStorage.getItem('posts' + username) != null) {
+      posts = JSON.parse(localStorage.getItem('posts' + username));
+    }
+
+    if (localStorage.getItem('categorizedPosts' + username) != null) {
+      categorizedPosts = JSON.parse(localStorage.getItem('categorizedPosts' + username));
+    }
+
+    if (localStorage.getItem('categories' + username) != null) {
+      categories = JSON.parse(localStorage.getItem('categories' + username));
+    } else {
+      categories = ["Uncategorized"];
+      localStorage.setItem('categories' + username, JSON.stringify(categories));
+    }
+
+    resolve();
+  });
 }
 
 function updateView(category) {
@@ -187,7 +205,9 @@ function updateView(category) {
   }
   document.getElementById('lastUpdated').innerHTML = d.getDate() + "/" + (d.getMonth() + 1) + " - " + hours + ":" + minutes;
 
-  document.getElementById('sync').classList.remove("spin");
+  if (!isFetching) {
+    document.getElementById('sync').classList.remove("spin");
+  }
 
 }
 
@@ -313,5 +333,7 @@ function closeErrorMenu() {
   document.getElementById('errorMenu').style.visibility = "hidden";
 }
 
-initView("All posts");
+updateDataFromMemory()
+  .then(() => { initView("All posts"); });
+
 getSavedPostsFromFeed();
