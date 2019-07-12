@@ -2,8 +2,6 @@
 
 ## 1.1.6
 
-(not yet released)
-
 Fixes bug where the extension would only load the first 25 saved links. The extension now fetches everything and displays the most recent saved links first. There may be a problem with a 1.000 links cap but this has not yet been reported.
 
 If you save new posts or remove saved posts while the extension is open on your browser (e.g. saving a post on your phone), the extension will now dynamically show the updated content. Previously it would fetch the new dataset but not update the view until the user closed and reopened the popup.
