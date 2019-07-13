@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.8
+
+Minor bug fixes.
+
+## 1.1.7
+
+Minor bug fixes.
+
 ## 1.1.6
 
 Fixes bug where the extension would only load the first 25 saved links. The extension now fetches everything and displays the most recent saved links first. There may be a problem with a 1.000 links cap but this has not yet been reported.
