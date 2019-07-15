@@ -1,12 +1,8 @@
 # Changelog
 
-## 1.1.8
+## 1.1.7 to 1.1.10
 
-Minor bug fixes.
-
-## 1.1.7
-
-Minor bug fixes.
+Fixed different bugs that was introduced in 1.1.6.
 
 ## 1.1.6
 
