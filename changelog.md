@@ -4,6 +4,8 @@
 
 Added pagination when a category contains more than 50 posts.
 
+Changed some icons.
+
 ## 1.1.11 and 1.1.12
 
 Removed unsafe assignments to .innerHTML and .append().
