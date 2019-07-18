@@ -170,7 +170,7 @@ function updateCategorizedPosts() {
       }
 
       if (postFound) { //adds all matching posts to a temporary array, that will be assigned to categorizedPosts
-        tempJSON[j] = categorizedPosts[i];
+        tempJSON[Object.keys(tempJSON).length] = categorizedPosts[i];
       }
 
     }

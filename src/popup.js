@@ -32,11 +32,8 @@ $("input").focusout(function(){
 });
 
 input.addEventListener("keyup",  function(event) {
-  // Number 13 is the "Enter" key on the keyboard
   if (event.keyCode === 13) {
-    // Cancel the default action, if needed
     event.preventDefault();
-    // Trigger the button element with a click
     document.getElementById("addFolder").click();
   }
 });
@@ -71,13 +68,24 @@ function initView(category) {
     return;
   }
 
-  document.getElementById('username').innerHTML = username;
+  console.log(categorizedPosts);
 
-  var folders = document.getElementById('folders');
+  $("#username").append(username);
 
-  folders.innerHTML = '<div class="folder" id="all">All posts</div>';
+  var folders = $("#folders");
+  folders.empty();
+
+  var allPostsFolder = $("<div>");
+  allPostsFolder.addClass("folder");
+  allPostsFolder.attr("id","all");
+  allPostsFolder.text("All posts");
+
+  folders.append(allPostsFolder);
 
   for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+    if (categorizedPosts[i] == undefined) {
+      continue;
+    }
     if (!categories.includes(categorizedPosts[i].category)) {
       categorizedPosts[i].category = "Uncategorized";
     }
@@ -86,7 +94,12 @@ function initView(category) {
   for (var i = 0; i < categories.length; i++) {
     var s = categories[i];
 
-    folders.innerHTML = folders.innerHTML + '<div class="folder" id="' + s + '">' + s + '</div>';
+    var categoryFolder = $("<div>");
+    categoryFolder.addClass("folder");
+    categoryFolder.attr("id",s);
+    categoryFolder.text(s);
+
+    folders.append(categoryFolder);
   }
 
   for (var i = 0; i < categories.length; i++) {
@@ -101,8 +114,6 @@ function initView(category) {
   document.getElementById("all").addEventListener("click", function() {
     updateView("All posts");
   });
-
-  // updateView(lastClickedCategory);
 
   updateDataFromMemory()
     .then(() => updateView(category));
@@ -136,7 +147,11 @@ function updateView(category) {
   // console.log(category);
   lastClickedCategory = category;
 
-  document.getElementById('categoryTitle').innerHTML = category;
+  $("#username").empty();
+  $("#categoryTitle").empty();
+
+  $("#username").append(username);
+  $("#categoryTitle").append(category);
 
   var deleteCategoryButton = document.getElementById('deleteCategory');
   if (category == "All posts" || category == "Uncategorized") {
@@ -148,17 +163,17 @@ function updateView(category) {
     }
   }
 
-  var postContainer = document.getElementById('postContainer');
-  postContainer.innerHTML = "";
+  var postContainer = $("#postContainer");
+  postContainer.empty();
 
   // console.log(categorizedPosts);
 
   //adds posts to DOM
   for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+    if (categorizedPosts[i] == undefined || categorizedPosts[i].title == undefined) {
+      continue;
+    }
     if (category == "All posts" || category == categorizedPosts[i].category) {
-      if (categorizedPosts[i].title == undefined) {
-        continue;
-      }
       var title = categorizedPosts[i].title.replace(/"/g, "'");
       var id = categorizedPosts[i].id;
       var permalink = categorizedPosts[i].permalink;
@@ -170,12 +185,34 @@ function updateView(category) {
       } else {
         type = categorizedPosts[i].type;
       }
-      postContainer.innerHTML = postContainer.innerHTML + '<div class="row editPost"><i title="Move post" class="fas fa-folder-open" id="' + id + 'button"></i><div class="post" id="' + id + '" data-link="' + permalink + '">' + title + type + '</div></div>';
+
+      var row = $("<div>");
+      row.addClass("row");
+      row.addClass("editPost");
+
+      var icon = $("<i>");
+      icon.addClass("fas");
+      icon.addClass("fa-folder-open");
+      icon.attr("id", id + "button");
+
+      var post = $("<div>");
+      post.addClass("post");
+      post.attr("id", id);
+      post.attr("data-link", permalink);
+      post.text(title + type);
+
+      row.append(icon);
+      row.append(post);
+
+      postContainer.append(row);
     }
   }
 
   //adds onclick listeners to posts
   for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+    if (categorizedPosts[i] == undefined || categorizedPosts[i].title == undefined) {
+      continue;
+    }
     if (category == "All posts" || category == categorizedPosts[i].category) {
       document.getElementById(categorizedPosts[i].id).addEventListener("click", function() {
         var href = this.dataset.link;
@@ -186,6 +223,9 @@ function updateView(category) {
 
   //adds onclick listeners to editpost-buttons
   for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+    if (categorizedPosts[i] == undefined || categorizedPosts[i].title == undefined) {
+      continue;
+    }
     if (category == "All posts" || category == categorizedPosts[i].category) {
       document.getElementById(categorizedPosts[i].id + "button").addEventListener("click", function() {
         editPostCategory(this.id.replace("button", ""));
@@ -203,7 +243,10 @@ function updateView(category) {
   if (hours < 10) {
     hours = "0" + hours;
   }
-  document.getElementById('lastUpdated').innerHTML = d.getDate() + "/" + (d.getMonth() + 1) + " - " + hours + ":" + minutes;
+
+  var lastUpdated = $("#lastUpdated");
+  lastUpdated.empty();
+  lastUpdated.text(d.getDate() + "/" + (d.getMonth() + 1) + " - " + hours + ":" + minutes);
 
   if (!isFetching) {
     document.getElementById('sync').classList.remove("spin");
@@ -213,7 +256,9 @@ function updateView(category) {
 
 
 function deleteCategory(category) {
-  document.getElementById('deletedCategory').innerHTML = category;
+  var deletedCategory = $("#deletedCategory");
+  deletedCategory.empty();
+  deletedCategory.text(category);
   document.getElementById('confirmDeletion').style.visibility = "visible";
   document.getElementById('confirmDeletion').style.opacity = 1;
   document.getElementById("deny").addEventListener("click", function() {
@@ -249,13 +294,16 @@ function deletionConfirmed(category) {
 }
 
 function editPostCategory(id) {
-  var foldersMovePostMenu = document.getElementById('foldersMovePostMenu');
-
-  foldersMovePostMenu.innerHTML = "";
+  var foldersMovePostMenu = $("#foldersMovePostMenu");
+  foldersMovePostMenu.empty();
 
   for (var i = 0; i < categories.length; i++) {
     var s = categories[i];
-    foldersMovePostMenu.innerHTML = foldersMovePostMenu.innerHTML + '<div class="folder" id="' + s + 'move">' + s + '</div>';
+    var folder = $("<div>");
+    folder.addClass("folder");
+    folder.attr("id", s + "move");
+    folder.text(s);
+    foldersMovePostMenu.append(folder);
   }
 
   for (var i = 0; i < categories.length; i++) {
@@ -284,11 +332,7 @@ function movePost(id, category) {
 
   updateView(lastClickedCategory);
 
-  // console.log("before:");
-  // console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
   localStorage.setItem('categorizedPosts' + username, JSON.stringify(categorizedPosts));
-  // console.log("after:");
-  // console.log(JSON.parse(localStorage.getItem('categorizedPosts' + username)));
 
   document.getElementById('movePostMenu').style.opacity = 0;
   document.getElementById('movePostMenu').style.visibility = "hidden";
@@ -323,7 +367,9 @@ function addFolder() {
 }
 
 function openErrorMenu(message) {
-  document.getElementById('errorMessage').innerHTML = message;
+  var errorMessage = $("#errorMessage");
+  errorMessage.empty();
+  errorMessage.text(message);
   document.getElementById('errorMenu').style.visibility = "visible";
   document.getElementById('errorMenu').style.opacity = 1;
 }
