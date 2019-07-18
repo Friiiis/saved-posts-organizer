@@ -1,8 +1,12 @@
 # Changelog
 
-## 1.1.11
+## 1.1.13
 
-Removed unsafe assignments to innerHTML.
+Added pagination when a category contains more than 50 posts.
+
+## 1.1.11 and 1.1.12
+
+Removed unsafe assignments to .innerHTML and .append().
 
 ## 1.1.7 to 1.1.10
 
