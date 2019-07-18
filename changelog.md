@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.11
+
+Removed unsafe assignments to innerHTML.
+
 ## 1.1.7 to 1.1.10
 
 Fixed different bugs that was introduced in 1.1.6.
