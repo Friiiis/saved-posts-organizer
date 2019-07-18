@@ -14,7 +14,7 @@
       <h1>Saved posts organizer</h1>
       u/<span id="username"></span>
     </div>
-    <h1><i title="Add folder" class="fas fa-plus-square" id="addFolder"></i></h1>
+    <h1><i title="Add folder" class="fas fa-plus-circle" id="addFolder"></i></h1>
   </header>
 
   <div class="folders" id="folders">
@@ -25,7 +25,11 @@
   <div class="posts">
     <div class="title">
       <h2 id="categoryTitle">All posts</h2>
-      <i title="Delete category" class="fas fa-minus-square" id="deleteCategory"></i>
+      <div class="row">
+        <i title="Previous page" class="fas fa-arrow-alt-circle-left" id="prevPage"></i>
+        <i title="Next page" class="fas fa-arrow-alt-circle-right" id="nextPage"></i>
+        <i title="Delete category" class="fas fa-trash-alt" id="deleteCategory"></i>
+      </div>
     </div>
     <div class="postContainer" id="postContainer">
     </div>

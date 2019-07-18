@@ -11,6 +11,7 @@ var posts = {}
 var categorizedPosts = {}
 var categories;
 var lastClickedCategory = "All posts";
+var currentPage = 0;
 
 var inputVisible = false;
 var isFetching = false;
@@ -101,18 +102,15 @@ function initView(category) {
     categoryFolder.text(s);
 
     folders.append(categoryFolder);
-  }
-
-  for (var i = 0; i < categories.length; i++) {
-    var s = categories[i];
 
     document.getElementById(s).addEventListener("click", function() {
+      currentPage = 0;
       updateView(this.id);
     });
   }
 
-
   document.getElementById("all").addEventListener("click", function() {
+    currentPage = 0;
     updateView("All posts");
   });
 
@@ -159,84 +157,119 @@ function updateView(category) {
 
   var deleteCategoryButton = document.getElementById('deleteCategory');
   if (category == "All posts" || category == "Uncategorized") {
+    deleteCategoryButton.style.opacity = 0;
     deleteCategoryButton.style.visibility = "hidden";
   } else {
+    deleteCategoryButton.style.opacity = 1;
     deleteCategoryButton.style.visibility = "visible";
     deleteCategoryButton.onclick = function() {
       deleteCategory(category);
     }
   }
 
+  var numberOfPages = getNumberOfPages(category);
+
+  // adds pagination
+  var prevPageButton = document.getElementById('prevPage');
+  var nextPageButton = document.getElementById('nextPage');
+  if (numberOfPages == 1) {
+    prevPageButton.style.opacity = 0;
+    nextPageButton.style.opacity = 0;
+    prevPageButton.style.visibility = "hidden";
+    nextPageButton.style.visibility = "hidden";
+  } else {
+    if (currentPage == 0) {
+      prevPageButton.style.opacity = 0;
+      nextPageButton.style.opacity = 1;
+      prevPageButton.style.visibility = "hidden";
+      nextPageButton.style.visibility = "visible";
+    } else if (currentPage == numberOfPages - 1) {
+      prevPageButton.style.opacity = 1;
+      nextPageButton.style.opacity = 0;
+      prevPageButton.style.visibility = "visible";
+      nextPageButton.style.visibility = "hidden";
+    } else if (currentPage == numberOfPages) {
+      prevPageButton.style.opacity = 1;
+      nextPageButton.style.opacity = 0;
+      prevPageButton.style.visibility = "visible";
+      nextPageButton.style.visibility = "hidden";
+    } else {
+      prevPageButton.style.opacity = 1;
+      nextPageButton.style.opacity = 1;
+      prevPageButton.style.visibility = "visible";
+      nextPageButton.style.visibility = "visible";
+    }
+  }
+
+  prevPageButton.onclick = function() {
+    previousPage();
+  }
+  nextPageButton.onclick = function() {
+    nextPage(numberOfPages);
+  }
+
+
   var postContainer = $("#postContainer");
   postContainer.empty();
 
   // console.log(categorizedPosts);
 
+  var counter = 0;
   //adds posts to DOM
   for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
     if (categorizedPosts[i] == undefined || categorizedPosts[i].title == undefined) {
       continue;
     }
     if (category == "All posts" || category == categorizedPosts[i].category) {
-      var title = categorizedPosts[i].title.replace(/"/g, "'");
-      var id = categorizedPosts[i].id;
-      var permalink = categorizedPosts[i].permalink;
-      var type;
-      // legacy code: the type text (if a link is a comment or a post) was stored
-      // in "type" variable until 1.1.3. It is now stored in "typeText" variable
-      if (categorizedPosts[i].typeText != undefined) {
-        type = categorizedPosts[i].typeText;
-      } else {
-        type = categorizedPosts[i].type;
+      if (currentPage * 50 <= counter && counter < (currentPage * 50) + 50) {
+        var title = categorizedPosts[i].title.replace(/"/g, "'");
+        var id = categorizedPosts[i].id;
+        var permalink = categorizedPosts[i].permalink;
+        var type;
+        // legacy code: the type text (if a link is a comment or a post) was stored
+        // in "type" variable until 1.1.3. It is now stored in "typeText" variable
+        if (categorizedPosts[i].typeText != undefined) {
+          type = categorizedPosts[i].typeText;
+        } else {
+          type = categorizedPosts[i].type;
+        }
+
+        var row = $("<div>");
+        row.addClass("row");
+        row.addClass("editPost");
+
+        var icon = $("<i>");
+        icon.addClass("fas");
+        icon.addClass("fa-folder-open");
+        icon.attr("id", id + "button");
+
+        var post = $("<div>");
+        post.addClass("post");
+        post.attr("id", id);
+        post.attr("data-link", permalink);
+        post.text(title + type);
+
+        row.append(icon);
+        row.append(post);
+
+        postContainer.append(row);
+
+        //adds onclick listeners to post
+        document.getElementById(categorizedPosts[i].id).addEventListener("click", function() {
+          var href = this.dataset.link;
+          chrome.tabs.create({active: true, url: href});
+        });
+
+        //adds onclick listeners to editpost-button
+        document.getElementById(categorizedPosts[i].id + "button").addEventListener("click", function() {
+          editPostCategory(this.id.replace("button", ""));
+        });
       }
 
-      var row = $("<div>");
-      row.addClass("row");
-      row.addClass("editPost");
+      counter++;
 
-      var icon = $("<i>");
-      icon.addClass("fas");
-      icon.addClass("fa-folder-open");
-      icon.attr("id", id + "button");
-
-      var post = $("<div>");
-      post.addClass("post");
-      post.attr("id", id);
-      post.attr("data-link", permalink);
-      post.text(title + type);
-
-      row.append(icon);
-      row.append(post);
-
-      postContainer.append(row);
     }
   }
-
-  //adds onclick listeners to posts
-  for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
-    if (categorizedPosts[i] == undefined || categorizedPosts[i].title == undefined) {
-      continue;
-    }
-    if (category == "All posts" || category == categorizedPosts[i].category) {
-      document.getElementById(categorizedPosts[i].id).addEventListener("click", function() {
-        var href = this.dataset.link;
-        chrome.tabs.create({active: true, url: href});
-      });
-    }
-  }
-
-  //adds onclick listeners to editpost-buttons
-  for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
-    if (categorizedPosts[i] == undefined || categorizedPosts[i].title == undefined) {
-      continue;
-    }
-    if (category == "All posts" || category == categorizedPosts[i].category) {
-      document.getElementById(categorizedPosts[i].id + "button").addEventListener("click", function() {
-        editPostCategory(this.id.replace("button", ""));
-      });
-    }
-  }
-
 
   var d = new Date(localStorage.getItem('lastUpdated' + username));
   var minutes = d.getMinutes();
@@ -258,20 +291,56 @@ function updateView(category) {
 
 }
 
+// returns the number of pages that is needed for showing a given category.
+// 50 posts is shown on each page.
+function getNumberOfPages(category) {
+  var amountOnPage = 50;
+
+  if (category == "All posts") {
+    return Math.ceil(Object.keys(categorizedPosts).length / amountOnPage);
+  } else {
+    var counter = 0;
+    for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
+      if (categorizedPosts[i] == undefined || categorizedPosts[i].title == undefined) {
+        continue;
+      }
+      if (category == categorizedPosts[i].category) {
+        counter++;
+      }
+    }
+    return Math.ceil(counter / amountOnPage);
+  }
+}
+
+function previousPage() {
+  if (!(0 == currentPage)) {
+    currentPage--;
+    updateView(lastClickedCategory);
+  }
+}
+
+function nextPage(numberOfPages) {
+  if (!(numberOfPages - 1 == currentPage)) {
+    if (numberOfPages - 1 > currentPage) {
+      currentPage++;
+      updateView(lastClickedCategory);
+    }
+  }
+}
 
 function deleteCategory(category) {
   var deletedCategory = $("#deletedCategory");
   deletedCategory.empty();
   deletedCategory.text(category);
-  document.getElementById('confirmDeletion').style.visibility = "visible";
   document.getElementById('confirmDeletion').style.opacity = 1;
+  document.getElementById('confirmDeletion').style.visibility = "visible";
   document.getElementById("deny").addEventListener("click", function() {
-    document.getElementById('confirmDeletion').style.visibility = "hidden";
     document.getElementById('confirmDeletion').style.opacity = 0;
+    document.getElementById('confirmDeletion').style.visibility = "hidden";
   });
   document.getElementById("confirm").addEventListener("click", function() {
-    document.getElementById('confirmDeletion').style.visibility = "hidden";
     document.getElementById('confirmDeletion').style.opacity = 0;
+    document.getElementById('confirmDeletion').style.visibility = "hidden";
     deletionConfirmed(category);
   });
 

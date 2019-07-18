@@ -104,10 +104,6 @@ footer i, header i, .title i, .editPost i, .folder, .post, .tryAgain, .confirmDe
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.subfolders {
-  margin-bottom: 8px;
-}
-
 .posts {
   background-color: white;
   height: 350px;
@@ -152,7 +148,20 @@ input {
 }
 
 .title i {
-  visibility: hidden;
+  /* visibility: hidden; */
+  margin-right: 5px;
+}
+
+.fa-trash-alt {
+  color: rgb(182, 182, 182);
+}
+
+.fa-trash-alt:hover {
+  color: rgb(0, 0, 0);
+}
+
+.fa-arrow-alt-circle-left, .fa-arrow-alt-circle-right {
+  color: #EF452C;
 }
 
 .footerMenu {
@@ -198,6 +207,7 @@ input {
 .spin {
   animation:spin 1s linear infinite;
 }
+
 
 @keyframes spin {
   100% {
