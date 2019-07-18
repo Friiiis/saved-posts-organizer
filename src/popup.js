@@ -70,7 +70,8 @@ function initView(category) {
 
   console.log(categorizedPosts);
 
-  $("#username").append(username);
+  var cleanUsername = DOMPurify.sanitize(username);
+  $("#username").append(cleanUsername);
 
   var folders = $("#folders");
   folders.empty();
@@ -150,8 +151,11 @@ function updateView(category) {
   $("#username").empty();
   $("#categoryTitle").empty();
 
-  $("#username").append(username);
-  $("#categoryTitle").append(category);
+  var cleanUsername = DOMPurify.sanitize(username);
+  var cleanCategory = DOMPurify.sanitize(category);
+
+  $("#username").append(cleanUsername);
+  $("#categoryTitle").append(cleanCategory);
 
   var deleteCategoryButton = document.getElementById('deleteCategory');
   if (category == "All posts" || category == "Uncategorized") {

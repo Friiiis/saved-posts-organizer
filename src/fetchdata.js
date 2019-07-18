@@ -151,6 +151,7 @@ function updateCategorizedPosts() {
     //checks if there is any previously saved and categorized posts, that have now been unsaved
     for (var i = 0; i < Object.keys(categorizedPosts).length; i++) {
       var postFound = false;
+      var k;
 
       for (var j = 0; j < Object.keys(posts).length; j++) {
         if (categorizedPosts[i] == undefined) {
@@ -162,6 +163,7 @@ function updateCategorizedPosts() {
             categorizedPosts[i].permalink = "https://www.reddit.com" + categorizedPosts[i].permalink;
           }
 
+          k = j;
           var postFound = true;
           break;
         } else {
@@ -170,7 +172,8 @@ function updateCategorizedPosts() {
       }
 
       if (postFound) { //adds all matching posts to a temporary array, that will be assigned to categorizedPosts
-        tempJSON[Object.keys(tempJSON).length] = categorizedPosts[i];
+        // tempJSON[Object.keys(tempJSON).length] = categorizedPosts[i];
+        tempJSON[k] = categorizedPosts[i];
       }
 
     }
@@ -196,9 +199,11 @@ function updateCategorizedPosts() {
       }
 
       if (!postFound) {
-        var k = Object.keys(categorizedPosts).length;
-        categorizedPosts[k] = posts[i];
-        categorizedPosts[k].category = 'Uncategorized';
+        // var k = Object.keys(categorizedPosts).length;
+        // categorizedPosts[k] = posts[i];
+        // categorizedPosts[k].category = 'Uncategorized';
+        categorizedPosts[i] = posts[i];
+        categorizedPosts[i].category = 'Uncategorized';
       }
 
     }
