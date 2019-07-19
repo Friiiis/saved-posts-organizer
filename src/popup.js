@@ -465,4 +465,4 @@ function closeErrorMenu() {
 updateDataFromMemory()
   .then(() => { initView("All posts"); });
 
-getSavedPostsFromFeed();
+// getSavedPostsFromFeed();
