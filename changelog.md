@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.14
+
+Fixed issue when switching between accounts.
+
+Removed automatic sync when openening the extension.
+
 ## 1.1.13
 
 Added pagination when a category contains more than 50 posts.
