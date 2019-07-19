@@ -1,6 +1,6 @@
 {
   "name": "Reddit saved posts organizer",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "manifest_version": 2,
 
   "minimum_chrome_version": "46",

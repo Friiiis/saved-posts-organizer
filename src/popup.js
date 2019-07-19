@@ -52,8 +52,18 @@ function getSavedPostsFromFeed() {
     .then((message) => {
       console.log(message);
       isFetching = false;
+      var usernameBefore = username;
       updateDataFromMemory()
-        .then(() => { updateView(lastClickedCategory) });
+        .then(() => {
+          // checks if the user has changed. If it has, then initView is called
+          // if it hasn't when updateView is called
+          var usernameAfter = username;
+          if (usernameBefore == usernameAfter) {
+            updateView(lastClickedCategory);
+          } else {
+            initView(lastClickedCategory);
+          }
+        });
     })
     .catch((error) => {
       console.log(error);
@@ -169,7 +179,7 @@ function updateView(category) {
 
   var numberOfPages = getNumberOfPages(category);
 
-  // adds pagination
+  // adds pagination buttons
   var prevPageButton = document.getElementById('prevPage');
   var nextPageButton = document.getElementById('nextPage');
   if (numberOfPages == 1) {
