@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.17
+
+Fixed bug where the "next page" button would show when there is 0 posts in a category.
+
+## 1.1.15 and 1.1.16
+
+Added correct versions Jquary and DOMPurify.
+
 ## 1.1.14
 
 Fixed issue when switching between accounts.
