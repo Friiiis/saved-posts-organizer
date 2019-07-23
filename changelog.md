@@ -6,7 +6,7 @@ Fixed bug where the "next page" button would show when there is 0 posts in a cat
 
 ## 1.1.15 and 1.1.16
 
-Added correct versions Jquary and DOMPurify.
+Added correct versions Jquery and DOMPurify.
 
 ## 1.1.14
 
