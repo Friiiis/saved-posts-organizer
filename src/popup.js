@@ -318,7 +318,11 @@ function getNumberOfPages(category) {
         counter++;
       }
     }
-    return Math.ceil(counter / amountOnPage);
+    if (counter == 0) {
+      return 1;
+    } else {
+      return Math.ceil(counter / amountOnPage);
+    }
   }
 }
 
